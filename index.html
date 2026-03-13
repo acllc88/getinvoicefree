@@ -493,37 +493,6 @@ footer{background:var(--bg2);border-top:1px solid var(--border);padding:28px 16p
           <div class="row r1"><div class="field"><label for="notes">Notes / Payment Terms</label><textarea id="notes" placeholder="Payment due within 30 days. Thank you!" oninput="render()" rows="2"></textarea></div></div>
 
           <div class="actions">
-
-              <!-- TEMPLATE STYLE SELECTOR -->
-              <div style="margin-bottom:4px">
-                <div class="sec" style="margin-top:16px">Invoice Style</div>
-                <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:6px;margin-bottom:12px">
-                  <a href="invoice-template-style-minimal.html" style="display:flex;flex-direction:column;align-items:center;gap:4px;padding:8px 6px;border:1.5px solid #e2e8f0;border-radius:8px;text-decoration:none;transition:border-color .15s" onmouseover="this.style.borderColor='#2563eb'" onmouseout="this.style.borderColor='#e2e8f0'">
-                    <div style="width:100%;height:24px;background:#f8f9fc;border-radius:3px;border:1px solid #e2e8f0"></div>
-                    <span style="font-size:10px;font-weight:600;color:#475569">Minimal</span>
-                  </a>
-                  <a href="invoice-template-style-classic.html" style="display:flex;flex-direction:column;align-items:center;gap:4px;padding:8px 6px;border:1.5px solid #e2e8f0;border-radius:8px;text-decoration:none;transition:border-color .15s" onmouseover="this.style.borderColor='#2563eb'" onmouseout="this.style.borderColor='#e2e8f0'">
-                    <div style="width:100%;height:24px;background:#1e3a5f;border-radius:3px"></div>
-                    <span style="font-size:10px;font-weight:600;color:#475569">Classic</span>
-                  </a>
-                  <a href="invoice-template-style-modern.html" style="display:flex;flex-direction:column;align-items:center;gap:4px;padding:8px 6px;border:1.5px solid #2563eb;border-radius:8px;text-decoration:none;border-width:2px" title="Current style">
-                    <div style="width:100%;height:24px;background:#eff6ff;border-radius:3px;border-left:3px solid #2563eb"></div>
-                    <span style="font-size:10px;font-weight:600;color:#2563eb">Modern ✓</span>
-                  </a>
-                  <a href="invoice-template-style-bold.html" style="display:flex;flex-direction:column;align-items:center;gap:4px;padding:8px 6px;border:1.5px solid #e2e8f0;border-radius:8px;text-decoration:none;transition:border-color .15s" onmouseover="this.style.borderColor='#2563eb'" onmouseout="this.style.borderColor='#e2e8f0'">
-                    <div style="width:100%;height:24px;background:#0f172a;border-radius:3px"></div>
-                    <span style="font-size:10px;font-weight:600;color:#475569">Bold</span>
-                  </a>
-                  <a href="invoice-template-style-colorful.html" style="display:flex;flex-direction:column;align-items:center;gap:4px;padding:8px 6px;border:1.5px solid #e2e8f0;border-radius:8px;text-decoration:none;transition:border-color .15s" onmouseover="this.style.borderColor='#2563eb'" onmouseout="this.style.borderColor='#e2e8f0'">
-                    <div style="width:100%;height:24px;background:linear-gradient(135deg,#7c3aed,#a855f7);border-radius:3px"></div>
-                    <span style="font-size:10px;font-weight:600;color:#475569">Colorful</span>
-                  </a>
-                  <a href="invoice-template-style-elegant.html" style="display:flex;flex-direction:column;align-items:center;gap:4px;padding:8px 6px;border:1.5px solid #e2e8f0;border-radius:8px;text-decoration:none;transition:border-color .15s" onmouseover="this.style.borderColor='#2563eb'" onmouseout="this.style.borderColor='#e2e8f0'">
-                    <div style="width:100%;height:24px;background:#14532d;border-radius:3px"></div>
-                    <span style="font-size:10px;font-weight:600;color:#475569">Elegant</span>
-                  </a>
-                </div>
-              </div>
             <button class="btn-pdf" onclick="dlPDF()" aria-label="Download invoice as PDF">
               <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
               Download PDF — Free
@@ -531,7 +500,6 @@ footer{background:var(--bg2);border-top:1px solid var(--border);padding:28px 16p
             <div class="btn-row">
               <button class="btn-s" onclick="saveInv()" aria-label="Save invoice">💾 Save Invoice</button>
               <button id="shareBtn" class="share-btn" onclick="shareInv()" aria-label="Share invoice">📤 Share</button>
-              <button class="share-btn" onclick="openEmailPanel()" aria-label="Email invoice" style="display:inline-flex;align-items:center;gap:6px;background:#eff6ff;color:#2563eb;border-color:#bfdbfe">✉️ Email</button>
               <button class="btn-t" onclick="clearForm()" aria-label="New invoice">🗑 New</button>
             </div>
           </div>
@@ -656,23 +624,15 @@ footer{background:var(--bg2);border-top:1px solid var(--border);padding:28px 16p
   </div>
 </footer>
 
-<!-- EMAIL MODAL -->
-<div class="modal-bg" id="emailModal" role="dialog" aria-modal="true" aria-label="Email invoice">
+<!-- MODAL -->
+<div class="modal-bg" id="emailModal" role="dialog" aria-modal="true" aria-label="Send by email">
   <div class="modal">
-    <h3 style="display:flex;align-items:center;gap:8px">✉️ Email Invoice to Client</h3>
-    <p style="font-size:13px;color:#475569;margin-bottom:14px">Generates a PDF then opens your email app with a pre-filled message. Attach the downloaded PDF.</p>
-    <div style="display:flex;flex-direction:column;gap:6px;margin-bottom:14px">
-      <label style="font-size:11px;font-weight:600;color:#64748b;text-transform:uppercase;letter-spacing:.05em">Client Email</label>
-      <input type="email" id="emailTo" placeholder="client@company.com" aria-label="Recipient email" style="font-size:15px;padding:10px 12px;border:1px solid #e2e8f0;border-radius:8px;font-family:'DM Sans',sans-serif;width:100%">
-    </div>
-    <div style="background:#eff6ff;border-radius:8px;padding:11px 14px;margin-bottom:14px;font-size:13px;color:#1d4ed8">
-      <strong>How it works:</strong> Click below → PDF downloads automatically → your email app opens with subject & message pre-filled → attach the PDF and send.
-    </div>
+    <h3>Send by Email</h3>
+    <p>Opens your mail client with a pre-filled subject and message.</p>
+    <input type="email" id="emailTo" placeholder="client@company.com" aria-label="Recipient email">
     <div class="modal-acts">
       <button class="btn-t" onclick="closeModal()">Cancel</button>
-      <button class="btn-p" id="emailSendBtn" onclick="doEmailPDF()">
-        <span id="emailBtnText">📥 Download PDF + Open Email</span>
-      </button>
+      <button class="btn-p" onclick="doSendEmail()">Open Mail Client</button>
     </div>
   </div>
 </div>
@@ -962,44 +922,18 @@ async function dlPDF(){
 function shareInv(){
   if(navigator.share){
     navigator.share({title:'Invoice from '+v('bizName'),text:`Invoice ${v('invNum')} — Total: ${g('totDisp').textContent}`,url:window.location.href}).catch(()=>{});
-  } else {
-    openEmailPanel();
   }
 }
 
 // ---- EMAIL ----
-function openEmailPanel(){
-  g('emailModal').classList.add('open');
-  setTimeout(()=>g('emailTo').focus(),100);
-}
-async function doEmailPDF(){
+function doSendEmail(){
   const to=g('emailTo').value.trim();
-  if(!to){toast('Enter client email first');g('emailTo').focus();return;}
-  const btn=g('emailSendBtn'),txt=g('emailBtnText');
-  const orig=txt.innerHTML;txt.innerHTML='⏳ Generating PDF...';btn.disabled=true;
-  try{
-    if(!window.html2canvas) await new Promise((res,rej)=>{const s=document.createElement('script');s.src='https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js';s.onload=res;s.onerror=rej;document.head.appendChild(s);});
-    if(!window.jspdf) await new Promise((res,rej)=>{const s=document.createElement('script');s.src='https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js';s.onload=res;s.onerror=rej;document.head.appendChild(s);});
-    const{jsPDF}=window.jspdf;
-    const el=g('preview');
-    const canvas=await html2canvas(el,{scale:2,useCORS:true,backgroundColor:'#ffffff',logging:false});
-    const img=canvas.toDataURL('image/jpeg',0.97);
-    const pdf=new jsPDF({orientation:'portrait',unit:'mm',format:'a4'});
-    const pw=pdf.internal.pageSize.getWidth(),ph=pdf.internal.pageSize.getHeight(),m=15;
-    const uw=pw-m*2,ih=(canvas.height*uw)/canvas.width;
-    if(ih<=ph-m*2){pdf.addImage(img,'JPEG',m,m,uw,ih);}
-    else{let y=0,pph=ph-m*2,pages=Math.ceil(ih/pph);for(let p=0;p<pages;p++){if(p>0)pdf.addPage();pdf.addImage(img,'JPEG',m,m-y,uw,ih);y+=pph;}}
-    const fname=(v('bizName')?v('bizName').replace(/[^a-zA-Z0-9]/g,'-')+'-':'')+(v('invNum')||'Invoice')+'.pdf';
-    txt.innerHTML='⏳ Opening email...';
-    pdf.save(fname);
-    const sub=encodeURIComponent('Invoice '+v('invNum')+' from '+(v('bizName')||'InvoiceFree'));
-    const body=encodeURIComponent('Hi '+v('cliName')+',' + '\n\nPlease find invoice '+v('invNum')+' for '+g('totDisp').textContent+' attached to this email.\n\nPayment is due by '+fd(v('dueDate'))+'.\n\n'+(v('notes')?'Notes: '+v('notes')+'\n\n':'')+'Thank you,\n'+(v('bizName')||''));
-    setTimeout(()=>{window.location.href='mailto:'+to+'?subject='+sub+'&body='+body;},600);
-    setTimeout(()=>{closeModal();toast('✓ PDF saved — attach it to the email that opened');},1200);
-  }catch(err){console.error(err);toast('Error generating PDF');}
-  finally{txt.innerHTML=orig;btn.disabled=false;}
+  if(!to){toast('Enter an email address');return}
+  const sub=encodeURIComponent(`Invoice ${v('invNum')} from ${v('bizName')}`);
+  const body=encodeURIComponent(`Hi,\n\nPlease find attached invoice ${v('invNum')} for ${g('totDisp').textContent}.\n\nThank you,\n${v('bizName')}`);
+  window.location.href=`mailto:${to}?subject=${sub}&body=${body}`;
+  closeModal();
 }
-function doSendEmail(){doEmailPDF();}
 function closeModal(){g('emailModal').classList.remove('open')}
 
 // ---- EMAIL CAPTURE ----
