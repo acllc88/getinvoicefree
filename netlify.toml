@@ -1,0 +1,33 @@
+# ── Domain redirect ───────────────────────────────────────────────────────────
+# 301 redirect: old Netlify subdomain → new custom domain
+# Uncomment the [[redirects]] block AFTER you connect getinvoicefree.app in Netlify
+
+# [[redirects]]
+#   from = "https://getinvoicefree.netlify.app/*"
+#   to   = "https://getinvoicefree.app/:splat"
+#   status = 301
+#   force  = true
+
+# ── Security headers ──────────────────────────────────────────────────────────
+[[headers]]
+  for = "/*"
+  [headers.values]
+    X-Frame-Options = "SAMEORIGIN"
+    X-Content-Type-Options = "nosniff"
+    Referrer-Policy = "strict-origin-when-cross-origin"
+    Permissions-Policy = "camera=(), microphone=(), geolocation=()"
+
+[[headers]]
+  for = "/sitemap.xml"
+  [headers.values]
+    Content-Type = "application/xml"
+
+[[headers]]
+  for = "/*.html"
+  [headers.values]
+    Cache-Control = "public, max-age=3600, must-revalidate"
+
+[[headers]]
+  for = "/robots.txt"
+  [headers.values]
+    Cache-Control = "public, max-age=86400"
