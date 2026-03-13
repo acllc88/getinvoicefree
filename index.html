@@ -52,6 +52,9 @@
 <script>window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}gtag('js',new Date());gtag('config','G-XXXXXXXXXX');</script> -->
 
 <!-- PERFORMANCE -->
+<link rel="dns-prefetch" href="//pagead2.googlesyndication.com">
+<link rel="dns-prefetch" href="//googleads.g.doubleclick.net">
+<link rel="dns-prefetch" href="//cdnjs.cloudflare.com">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="preload" href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600&family=DM+Mono:wght@400;500&display=swap" as="style" onload="this.onload=null;this.rel='stylesheet'">
@@ -79,7 +82,7 @@
 }
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
 html{scroll-behavior:smooth}
-body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);line-height:1.6;transition:background .2s,color .2s;min-height:100vh;-webkit-text-size-adjust:100%}
+body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);line-height:1.6;min-height:100vh;-webkit-text-size-adjust:100%}
 
 /* === COOKIE BANNER === */
 #cookie-banner{position:fixed;bottom:0;left:0;right:0;background:var(--bg2);border-top:1px solid var(--border);padding:12px 16px;display:flex;align-items:center;gap:12px;flex-wrap:wrap;z-index:999;font-size:13px;color:var(--text2)}
@@ -345,11 +348,16 @@ footer{background:var(--bg2);border-top:1px solid var(--border);padding:28px 16p
 .modal input:focus{outline:none;border-color:var(--accent)}
 .modal-acts{display:flex;gap:8px;justify-content:flex-end}
 
+
+/* === PERFORMANCE: content-visibility for off-screen sections === */
+.cw,.tracker-wrap,.email-capture,.faq-section{content-visibility:auto;contain-intrinsic-size:0 500px}
+/* Avoid layout shift on fonts */
+@font-face{font-family:'DM Sans';font-display:swap}
+@font-face{font-family:'DM Mono';font-display:swap}
+
 /* === SHARE BTN === */
 .share-btn{background:var(--bg3);color:var(--text2);border:1px solid var(--border);border-radius:8px;padding:12px 13px;font-size:14px;cursor:pointer;font-family:'DM Sans',sans-serif;display:none;-webkit-tap-highlight-color:transparent;font-weight:500}
 </style>
-<!-- Google AdSense -->
-<script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4036780477567730" crossorigin="anonymous"></script>
 <!-- jsPDF + html2canvas: loaded on demand when PDF button clicked -->
 </head>
 <body>
@@ -1013,5 +1021,7 @@ function fd(d){if(!d)return'—';const[y,m,dd]=d.split('-');return`${dd}/${m}/${
 
 init();
 </script>
+<!-- Google AdSense: deferred to avoid render-blocking -->
+<script>(function(){var s=document.createElement('script');s.async=true;s.src='https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4036780477567730';s.crossOrigin='anonymous';document.body.appendChild(s);})();</script>
 </body>
 </html>
