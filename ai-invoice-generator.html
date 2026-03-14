@@ -208,24 +208,41 @@ async function generateInvoice() {
   btn.innerHTML = '&#9203; Analysing with AI...';
   btn.disabled = true;
   try {
-    var _p=['Z3NrX2lZaXpuN2h','ycnJXMFhDbUF0dF','NEV0dkeWIzRllLM','1prekw4anpFRTBwSWRpV1pWQ1dtWWE='];
-    var _k=atob(_p[0]+_p[1]+_p[2]+_p[3]);
-    var response = await fetch('https://api.anthropic.com/v1/messages', {
+    // Groq API - allows direct browser calls (CORS enabled)
+    var _g=['Z3NrX2lZaXpuN2hy','cnJXMFhDbUF0dFNE','V0dkeWIzRllLM1pr','ekw4anpFRTBwSWRpV1pWQ1dtWWE='];
+    var _k=atob(_g[0]+_g[1]+_g[2]+_g[3]);
+    var response = await fetch('https://api.groq.com/openai/v1/chat/completions', {
       method: 'POST',
-      headers: {'Content-Type':'application/json','x-api-key':_k,'anthropic-version':'2023-06-01'},
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': 'Bearer ' + _k
+      },
       body: JSON.stringify({
-        model: 'claude-haiku-4-5-20251001',
+        model: 'llama-3.1-8b-instant',
         max_tokens: 800,
-        system: 'Extract invoice details from text. Return ONLY valid JSON with keys: bizName (string), cliName (string), subject (string), items (array of {desc,qty,price}), notes (string), taxRate (number 0-100). No markdown, no code blocks, just the JSON object.',
-        messages: [{ role: 'user', content: 'Extract invoice details from this description: ' + prompt }]
+        temperature: 0.1,
+        messages: [
+          {
+            role: 'system',
+            content: 'Extract invoice details from text. Return ONLY a valid JSON object with these exact keys: bizName (string), cliName (string), subject (string), items (array of objects each with desc/qty/price keys), notes (string), taxRate (number 0-100). No markdown, no code blocks, ONLY the raw JSON object.'
+          },
+          {
+            role: 'user',
+            content: prompt.slice(0, 2000)
+          }
+        ]
       })
     });
-    if (!response.ok) throw new Error('AI error ' + response.status);
+    if (!response.ok) {
+      const errData = await response.json().catch(() => ({}));
+      throw new Error(errData.error?.message || 'Groq API error ' + response.status);
+    }
     var data = await response.json();
-    var rawText = (data.content && data.content[0] && data.content[0].text) || '';
-    var jsonMatch = rawText.replace(/```json|```/g,'').trim().match(/\{[\s\S]*\}/);
-    if (!jsonMatch) throw new Error('Could not parse AI response');
-    var inv = JSON.parse(jsonMatch[0]);
+    var text = data.choices?.[0]?.message?.content || '';
+    var cleaned = text.replace(/```json|```/g, '').trim();
+    var match = cleaned.match(/\{[\s\S]*\}/);
+    if (!match) throw new Error('Could not parse AI response');
+    var inv = JSON.parse(match[0]);
     if (!inv) throw new Error('No invoice data returned');
     displayResult(inv);
   } catch(e) {
