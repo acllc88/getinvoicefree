@@ -20,6 +20,7 @@
 <noscript><link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600&display=swap" rel="stylesheet"></noscript>
 <link rel="icon" type="image/x-icon" href="favicon.ico">
 <style>
+
 *{box-sizing:border-box;margin:0;padding:0}
 body{font-family:'DM Sans',sans-serif;background:#f8f9fc;color:#0f172a;line-height:1.6}
 a{color:#2563eb;text-decoration:none}a:hover{text-decoration:underline}
@@ -67,7 +68,8 @@ footer{background:#fff;border-top:1px solid #e2e8f0;padding:28px 20px}
 .fl a{font-size:12px;color:#64748b;text-decoration:none}
 .fl a:hover{color:#2563eb}
 .fc{font-size:11px;color:#94a3b8}
-</style>
+
+
 
 /* ── FORM ── */
 :root{--ac:#2563eb;--bd:#e2e8f0;--bg2:#f8f9fc;--tx:#0f172a;--tx2:#475569;--tx3:#94a3b8}
@@ -127,6 +129,7 @@ footer{background:#fff;border-top:1px solid #e2e8f0;padding:28px 20px}
       .p-notes{border-top:1px solid #e2e8f0;padding-top:10px;margin-top:4px;font-size:10px;color:#64748b}
       .p-foot{text-align:center;font-size:10px;color:#94a3b8;margin-top:14px;padding-top:10px;border-top:1px solid #f1f5f9}
     
+
 </style>
 </head>
 <body>
@@ -379,22 +382,11 @@ async function emailPDF(){
     if(ih<=ph-m*2){pdf.addImage(img,'JPEG',m,m,uw,ih);}
     else{let y=0,pph=ph-m*2,pages=Math.ceil(ih/pph);for(let p=0;p<pages;p++){if(p>0)pdf.addPage();pdf.addImage(img,'JPEG',m,m-y,uw,ih);y+=pph;}}
     const fname=(g('bizName')?g('bizName').replace(/[^a-zA-Z0-9]/g,'-')+'-':'')+(g('invNum')||'Invoice')+'.pdf';
-    const pdfBlob=pdf.output('blob');
-    const pdfBase64=pdf.output('datauristring');
-    // Try mailto with data URI (works in some clients)
     const sub=encodeURIComponent('Invoice '+g('invNum')+' from '+(g('bizName')||'InvoiceFree'));
-    const body=encodeURIComponent('Hi,
-
-Please find your invoice '+g('invNum')+' for '+document.getElementById('totDisp').textContent+' attached.
-
-Thank you,
-'+(g('bizName')||''));
-    // Download PDF first, then open mail client
+    const body=encodeURIComponent('Hi '+g('cliName')+', Please find invoice '+g('invNum')+' for '+document.getElementById('totDisp').textContent+' attached. Due: '+fmtDate(g('dueDate'))+'. Thank you, '+(g('bizName')||''));
     pdf.save(fname);
-    setTimeout(()=>{
-      window.location.href='mailto:'+to+'?subject='+sub+'&body='+body;
-      toast('✓ PDF saved — attach it to the email that just opened');
-    },500);
+    setTimeout(()=>{ window.location.href='mailto:'+to+'?subject='+sub+'&body='+body; },500);
+    setTimeout(()=>{ toast('PDF saved — attach it to the email that opened'); },1200);
   }catch(err){console.error(err);toast('Error — please use Download PDF instead');}
   finally{btn.innerHTML=orig;btn.disabled=false;}
 }
