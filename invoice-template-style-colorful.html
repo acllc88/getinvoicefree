@@ -288,7 +288,7 @@ function render(){
       '<td style="text-align:right">'+c+pf(i.price).toFixed(2)+'</td>'+
       '<td style="text-align:right">'+c+(pf(i.qty)*pf(i.price)).toFixed(2)+'</td></tr>';
   }).join('')||'<tr><td colspan="4" style="text-align:center;color:#94a3b8;padding:12px;font-size:11px">Add line items above</td></tr>';
-  var logo=logoData?'<img src="'+logoData+'" style="max-height:40px;max-width:100px;display:block;margin-bottom:4px;filter:brightness(0) invert(1)" alt="logo">':'';
+  var logo=logoData?'<img src="'+logoData+'" style="max-height:40px;max-width:100px;display:block;margin-bottom:4px" alt="logo">':'';
   document.getElementById('inv-preview').innerHTML=
     '<div class="p-head">'+
       '<div>'+logo+'<div class="p-biz-name">'+esc(biz)+'</div>'+
