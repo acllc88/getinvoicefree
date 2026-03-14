@@ -1118,104 +1118,108 @@ function _loadScript(src){
   });
 }
 
-async function dlPDF(){
+function dlPDF(){
   const btn = document.querySelector('.btn-pdf');
   const prevHTML = btn.innerHTML;
-  btn.innerHTML = '⏳ Loading...';
+  btn.innerHTML = '&#9203; Generating...';
   btn.disabled = true;
 
   try {
-    if(!window.html2canvas){
-      btn.innerHTML='⏳ Loading PDF engine...';
-      await _loadScript('https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js');
-    }
-    if(!window.jspdf){
-      await _loadScript('https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js');
-    }
-    btn.innerHTML='⏳ Generating PDF...';
-    const { jsPDF } = window.jspdf;
+    // Get all invoice data from current preview
     const preview = document.getElementById('preview');
+    const invoiceHTML = preview.innerHTML;
 
-    // Temporarily force white background & light theme for capture
-    const html = document.documentElement;
-    const wasDark = html.getAttribute('data-theme') === 'dark';
-    if (wasDark) html.setAttribute('data-theme', 'light');
-    preview.style.background = '#ffffff';
-    preview.style.color = '#0f172a';
+    // Detect current settings
+    const langEl = document.getElementById('invoiceLang');
+    const isArabic = langEl && langEl.value === 'ar';
+    const dir = isArabic ? 'rtl' : 'ltr';
 
-    // Wait a frame for styles to apply
-    // Await fonts (critical for Arabic/RTL text rendering in html2canvas)
-    await document.fonts.ready;
-    await new Promise(r => setTimeout(r, 120));
+    // Get all font families currently in use
+    const currentFont = invoiceFont || 'DM Sans';
 
-    const langEl2 = document.getElementById('invoiceLang');
-    const isArabicPDF = langEl2 && langEl2.value === 'ar';
-
-    const canvas = await html2canvas(preview, {
-      scale: 3,
-      useCORS: true,
-      allowTaint: true,
-      backgroundColor: '#ffffff',
-      logging: false,
-      removeContainer: true,
-      // Force font rendering
-      onclone: function(clonedDoc) {
-        const clonedPreview = clonedDoc.getElementById('preview');
-        if(clonedPreview && isArabicPDF){
-          clonedPreview.style.fontFamily = "'Noto Sans Arabic', Arial, sans-serif";
-          clonedPreview.setAttribute('dir','rtl');
-          // Add font import to cloned doc
-          const style = clonedDoc.createElement('style');
-          style.textContent = "@import url('https://fonts.googleapis.com/css2?family=Noto+Sans+Arabic:wght@400;600;700&display=swap');";
-          clonedDoc.head.appendChild(style);
-        }
-      }
-    });
-
-    // Restore theme
-    if (wasDark) html.setAttribute('data-theme', 'dark');
-    preview.style.background = '';
-    preview.style.color = '';
-
-    const langEl3 = document.getElementById('invoiceLang');
-    const usePN = langEl3 && langEl3.value === 'ar';
-    const imgData = usePN ? canvas.toDataURL('image/png') : canvas.toDataURL('image/jpeg', 0.97);
-    const imgFmt = usePN ? 'PNG' : 'JPEG';
-    const pdf = new jsPDF({ orientation: 'portrait', unit: 'mm', format: 'a4' });
-
-    const pageW = pdf.internal.pageSize.getWidth();
-    const pageH = pdf.internal.pageSize.getHeight();
-    const margin = 10;
-    const usableW = pageW - margin * 2;
-    const imgH = (canvas.height * usableW) / canvas.width;
-
-    // If invoice is taller than one page, split across pages
-    if (imgH <= pageH - margin * 2) {
-      pdf.addImage(imgData, imgFmt || 'JPEG', margin, margin, usableW, imgH);
-    } else {
-      let yOffset = 0;
-      const pageImgH = pageH - margin * 2;
-      const totalPages = Math.ceil(imgH / pageImgH);
-      for (let p = 0; p < totalPages; p++) {
-        if (p > 0) pdf.addPage();
-        pdf.addImage(imgData, imgFmt || 'JPEG', margin, margin - yOffset, usableW, imgH);
-        yOffset += pageImgH;
-      }
+    // Build Google Fonts URL including Arabic if needed
+    let fontsURL = 'https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=DM+Mono:wght@400;500&display=swap';
+    if(isArabic){
+      fontsURL = 'https://fonts.googleapis.com/css2?family=Noto+Sans+Arabic:wght@400;500;600;700&family=DM+Sans:wght@400;500;600;700&display=swap';
     }
 
-    const invNum = v('invNum') || 'Invoice';
-    const bizName = v('bizName');
-    const filename = (bizName ? bizName.replace(/[^a-zA-Z0-9]/g,'-') + '-' : '') + invNum + '.pdf';
-    pdf.save(filename);
-    toast('PDF downloaded ✓');
+    // Get all styles from the current page that apply to the preview
+    const previewStyles = `
+      *{box-sizing:border-box;margin:0;padding:0}
+      html,body{margin:0;padding:0;background:#fff}
+      body{font-family:'${currentFont}',${isArabic?"'Noto Sans Arabic',":''}sans-serif;color:#0f172a;font-size:12px;line-height:1.6;direction:${dir}}
+      #invoice-wrap{padding:20px;max-width:210mm;margin:0 auto;background:#fff}
+      /* Copy all .inv-* styles from main page */
+      .inv-header{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:20px;gap:12px}
+      .inv-logo img{max-height:56px;max-width:140px;object-fit:contain}
+      .inv-title h1{font-size:28px;font-weight:700;letter-spacing:.04em;text-align:right}
+      .inv-title p{font-size:12px;color:#64748b;text-align:right;margin-top:2px}
+      .inv-parties{display:grid;grid-template-columns:1fr 1fr;gap:20px;margin-bottom:16px}
+      .inv-party h3{font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:#94a3b8;margin-bottom:4px}
+      .inv-party .nm{font-size:14px;font-weight:600}
+      .inv-party p{font-size:11px;color:#475569;margin-top:2px}
+      .inv-meta{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:16px;background:#f8f9fc;border-radius:8px;padding:12px}
+      .inv-meta div label{font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:#94a3b8;display:block;margin-bottom:2px}
+      .inv-meta div span{font-size:12px;font-weight:600}
+      .inv-tbl{width:100%;border-collapse:collapse;margin-bottom:12px;font-size:12px}
+      .inv-tbl thead tr{background:#f8f9fc}
+      .inv-tbl th{font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:#64748b;padding:8px 10px;border-bottom:2px solid #e2e8f0;text-align:left}
+      .inv-tbl td{padding:8px 10px;border-bottom:1px solid #f1f5f9;vertical-align:top}
+      .inv-tots{display:flex;flex-direction:column;align-items:flex-end;gap:4px;margin-bottom:14px}
+      .inv-tot-r{display:flex;gap:24px;font-size:12px;color:#475569;min-width:200px;justify-content:space-between}
+      .inv-grand{font-weight:700;font-size:15px;padding-top:6px;border-top:2px solid #e2e8f0;margin-top:2px}
+      .inv-notes{background:#f8f9fc;border-radius:6px;padding:10px 12px;margin-bottom:14px}
+      .inv-notes h3{font-size:9px;font-weight:700;color:#94a3b8;text-transform:uppercase;letter-spacing:.06em;margin-bottom:4px}
+      .inv-notes p{font-size:11px;color:#475569;white-space:pre-line}
+      .inv-foot{text-align:center;font-size:11px;color:#94a3b8;margin-top:16px;padding-top:12px;border-top:1px solid #f1f5f9}
+      ${isArabic ? '.inv-tbl th,.inv-tbl td{text-align:right} .inv-title h1,.inv-title p{text-align:left} .inv-header{flex-direction:row-reverse}' : ''}
+      @media print{
+        @page{margin:10mm;size:A4 portrait}
+        body{-webkit-print-color-adjust:exact;print-color-adjust:exact}
+      }
+    `;
+
+    // Build the full print document
+    const printDoc = `<!DOCTYPE html>
+<html lang="${isArabic?'ar':'en'}" dir="${dir}">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Invoice</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="${fontsURL}" rel="stylesheet">
+<style>${previewStyles}</style>
+</head>
+<body>
+<div id="invoice-wrap">${invoiceHTML}</div>
+<script>
+// Auto-print once fonts load
+document.fonts.ready.then(function(){
+  setTimeout(function(){ window.print(); }, 300);
+});
+// Close window after print dialog
+window.addEventListener('afterprint', function(){ window.close(); });
+<\/script>
+</body>
+</html>`;
+
+    // Open print window
+    const pw = window.open('', '_blank', 'width=900,height=700');
+    if(!pw){
+      toast('Allow popups to download PDF');
+      return;
+    }
+    pw.document.open();
+    pw.document.write(printDoc);
+    pw.document.close();
+    toast('Print dialog opening — Save as PDF');
 
   } catch(err) {
     console.error('PDF error:', err);
-    toast('Error — trying print fallback...');
-    setTimeout(() => window.print(), 400);
+    toast('Error generating PDF');
   } finally {
-    btn.innerHTML = prevHTML;
-    btn.disabled = false;
+    setTimeout(function(){ btn.innerHTML = prevHTML; btn.disabled = false; }, 1000);
   }
 }
 

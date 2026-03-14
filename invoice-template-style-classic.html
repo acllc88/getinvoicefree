@@ -635,53 +635,52 @@ function loadScript(src){
     var s=document.createElement('script');s.src=src;s.onload=res;s.onerror=rej;document.head.appendChild(s);
   });
 }
-async function dlPDF(){
+function dlPDF(){
   var btn=document.getElementById('dlBtn'),orig=btn.innerHTML;
-  btn.innerHTML='&#9203; Loading...';btn.disabled=true;
+  btn.innerHTML='&#9203; Generating...';btn.disabled=true;
   try{
-    await loadScript('https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js');
-    await loadScript('https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js');
-    btn.innerHTML='&#9203; Generating...';
-    var jsPDF=window.jspdf.jsPDF;
     var el=document.getElementById('inv-preview');
-    var canvas=await html2canvas(el,{scale:2,useCORS:true,backgroundColor:'#ffffff',logging:false});
-    var img=canvas.toDataURL('image/jpeg',0.97);
-    var pdf=new jsPDF({orientation:'portrait',unit:'mm',format:'a4'});
-    var pw=pdf.internal.pageSize.getWidth(),ph=pdf.internal.pageSize.getHeight(),m=15;
-    var uw=pw-m*2,ih=(canvas.height*uw)/canvas.width;
-    if(ih<=ph-m*2){pdf.addImage(img,'JPEG',m,m,uw,ih);}
-    else{var y=0,pph=ph-m*2,pages=Math.ceil(ih/pph);for(var p=0;p<pages;p++){if(p>0)pdf.addPage();pdf.addImage(img,'JPEG',m,m-y,uw,ih);y+=pph;}}
-    var fname=(gv('bizName')?gv('bizName').replace(/[^a-zA-Z0-9]/g,'-')+'-':'')+(gv('invNum')||'Invoice')+'.pdf';
-    pdf.save(fname);toast('PDF downloaded!');
+    var invoiceHTML=el.innerHTML;
+    var langEl=document.getElementById('invoiceLang');
+    var isArabic=langEl&&langEl.value==='ar';
+    var dir=isArabic?'rtl':'ltr';
+    var font=invoiceFont||'DM Sans';
+    var fontsURL=isArabic
+      ?'https://fonts.googleapis.com/css2?family=Noto+Sans+Arabic:wght@400;500;600;700&family=DM+Sans:wght@400;500;600;700&display=swap'
+      :'https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&display=swap';
+    var allStyles=Array.from(document.querySelectorAll('style')).map(function(s){return s.textContent;}).join('\n');
+    var printDoc='<!DOCTYPE html><html lang="'+(isArabic?'ar':'en')+'" dir="'+dir+'"><head><meta charset="UTF-8"><title>Invoice</title>'
+      +'<link rel="preconnect" href="https://fonts.googleapis.com">'
+      +'<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>'
+      +'<link href="'+fontsURL+'" rel="stylesheet">'
+      +'<style>'
+      +'*{box-sizing:border-box;margin:0;padding:0}'
+      +'html,body{background:#fff;margin:0;padding:20px}'
+      +'body{font-family:"'+font+'",'+(isArabic?'"Noto Sans Arabic",':'')+'sans-serif;direction:'+dir+';color:#0f172a}'
+      +allStyles
+      +'@page{margin:10mm;size:A4 portrait}'
+      +'@media print{body{-webkit-print-color-adjust:exact;print-color-adjust:exact}}'
+      +'</style></head><body>'
+      +invoiceHTML
+      +'<script>document.fonts.ready.then(function(){setTimeout(function(){window.print();},400);});window.addEventListener("afterprint",function(){window.close();});<\/script>'
+      +'</body></html>';
+    var pw=window.open('','_blank','width=900,height=700');
+    if(!pw){toast('Allow popups to download PDF');return;}
+    pw.document.open();pw.document.write(printDoc);pw.document.close();
+    toast('Print dialog opening — Save as PDF');
     try{localStorage.setItem('inv_c',parseInt(localStorage.getItem('inv_c')||'0')+1);}catch(e){}
   }catch(err){console.error(err);toast('Error generating PDF');}
-  finally{btn.innerHTML=orig;btn.disabled=false;}
+  finally{setTimeout(function(){btn.innerHTML=orig;btn.disabled=false;},1000);}
 }
-async function emailPDF(){
+function emailPDF(){
   var to=document.getElementById('emailTo').value.trim();
   if(!to){document.getElementById('emailTo').focus();toast('Enter client email first');return;}
-  var btn=document.getElementById('emailBtn'),orig=btn.innerHTML;
-  btn.innerHTML='&#9203; Generating PDF...';btn.disabled=true;
-  try{
-    await loadScript('https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js');
-    await loadScript('https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js');
-    var jsPDF=window.jspdf.jsPDF;
-    var el=document.getElementById('inv-preview');
-    var canvas=await html2canvas(el,{scale:2,useCORS:true,backgroundColor:'#ffffff',logging:false});
-    var img=canvas.toDataURL('image/jpeg',0.97);
-    var pdf=new jsPDF({orientation:'portrait',unit:'mm',format:'a4'});
-    var pw=pdf.internal.pageSize.getWidth(),ph=pdf.internal.pageSize.getHeight(),m=15;
-    var uw=pw-m*2,ih=(canvas.height*uw)/canvas.width;
-    if(ih<=ph-m*2){pdf.addImage(img,'JPEG',m,m,uw,ih);}
-    else{var y=0,pph=ph-m*2,pages=Math.ceil(ih/pph);for(var p=0;p<pages;p++){if(p>0)pdf.addPage();pdf.addImage(img,'JPEG',m,m-y,uw,ih);y+=pph;}}
-    var fname=(gv('bizName')?gv('bizName').replace(/[^a-zA-Z0-9]/g,'-')+'-':'')+(gv('invNum')||'Invoice')+'.pdf';
-    var sub=encodeURIComponent('Invoice '+gv('invNum')+' from '+(gv('bizName')||'InvoiceFree'));
-    var body=encodeURIComponent('Hi '+gv('cliName')+', please find invoice '+gv('invNum')+' for '+document.getElementById('totDisp').textContent+' attached. Due: '+fd(gv('dueDate'))+'. Thank you, '+(gv('bizName')||''));
-    pdf.save(fname);
-    setTimeout(function(){window.location.href='mailto:'+to+'?subject='+sub+'&body='+body;},500);
-    setTimeout(function(){toast('PDF saved \u2014 attach it to the email that opened');},1200);
-  }catch(err){console.error(err);toast('Error generating PDF');}
-  finally{btn.innerHTML=orig;btn.disabled=false;}
+  var sub=encodeURIComponent('Invoice '+gv('invNum')+' from '+(gv('bizName')||'InvoiceFree'));
+  var body=encodeURIComponent('Hi '+gv('cliName')+', please find invoice '+gv('invNum')+' for '+document.getElementById('totDisp').textContent+'. Due: '+fd(gv('dueDate'))+'. Thank you, '+(gv('bizName')||''));
+  dlPDF();
+  setTimeout(function(){
+    window.location.href='mailto:'+to+'?subject='+sub+'&body='+body;
+  },800);
 }
 init();
 
