@@ -74,17 +74,56 @@ footer{background:#fff;border-top:1px solid #e2e8f0;padding:32px 20px}
 .footer-links a{font-size:12px;color:#64748b;text-decoration:none}
 .footer-links a:hover{color:#2563eb}
 .footer-copy{font-size:12px;color:#94a3b8}
+nav{background:var(--bg,#fff);border-bottom:1px solid var(--border,#e2e8f0);position:sticky;top:0;z-index:100}
+.nav-inner,.nav-in{max-width:1100px;margin:0 auto;padding:0 16px;display:flex;align-items:center;justify-content:space-between;height:52px;gap:8px}
+.nav-logo{font-weight:600;font-size:16px;color:var(--text,#0f172a);text-decoration:none;display:flex;align-items:center;gap:7px;flex-shrink:0}
+.nav-logo span,.nav-logo em{color:#2563eb;font-style:normal}
+.nav-links{display:flex;align-items:center;gap:4px}
+.nav-links a{font-size:13px;color:var(--text2,#475569);text-decoration:none;padding:5px 10px;border-radius:6px;transition:background .15s;white-space:nowrap}
+.nav-links a:hover{background:var(--bg3,#f1f4f9);color:var(--text,#0f172a)}
+.nav-burger{display:none;flex-direction:column;justify-content:space-between;width:28px;height:20px;background:none;border:none;cursor:pointer;padding:0;gap:4px}
+.nav-burger span{display:block;width:20px;height:2px;background:var(--text2,#475569);border-radius:2px;transition:all .2s}
+.nav-burger.open span:nth-child(1){transform:translateY(6px) rotate(45deg)}
+.nav-burger.open span:nth-child(2){opacity:0}
+.nav-burger.open span:nth-child(3){transform:translateY(-6px) rotate(-45deg)}
+.nav-drawer{display:none;flex-direction:column;gap:4px;padding:10px 14px 14px;background:var(--bg,#fff);border-bottom:1px solid var(--border,#e2e8f0)}
+.nav-drawer.open{display:flex}
+.nav-drawer a{font-size:14px;color:var(--text2,#475569);text-decoration:none;padding:10px 12px;border-radius:8px;transition:background .15s}
+.nav-drawer a:hover{background:var(--bg3,#f1f4f9)}
+.nav-drawer .dark-btn{align-self:flex-start;margin-top:4px}
+@media(max-width:768px){.nav-links{display:none!important}.nav-burger{display:flex}}
+.fl a{font-size:12px;color:#64748b;text-decoration:none}
+.fl a:hover{color:#2563eb}
 </style>
 <meta name="google-adsense-account" content="ca-pub-4036780477567730">
 </head>
 <body>
 <nav>
   <div class="nav-inner">
-    <a href="/" class="nav-logo">
-      <svg width="20" height="20" viewBox="0 0 20 20" fill="none"><rect width="20" height="20" rx="4" fill="#2563EB"/><rect x="5" y="6" width="7" height="1.5" rx=".75" fill="white"/><rect x="5" y="9.25" width="10" height="1.5" rx=".75" fill="white"/><rect x="5" y="12.5" width="5" height="1.5" rx=".75" fill="white"/></svg>
+    <a href="/" class="nav-logo" aria-label="InvoiceFree home">
+      <svg width="20" height="20" viewBox="0 0 20 20" fill="none" aria-hidden="true"><rect width="20" height="20" rx="4" fill="#2563EB"/><rect x="5" y="6" width="7" height="1.5" rx=".75" fill="white"/><rect x="5" y="9.25" width="10" height="1.5" rx=".75" fill="white"/><rect x="5" y="12.5" width="5" height="1.5" rx=".75" fill="white"/></svg>
       Invoice<span>Free</span>
     </a>
-    <a href="/" class="back">← Back to Tool</a>
+    <div class="nav-links" role="navigation">
+      <a href="/">Invoice Generator</a>
+      <a href="receipt-generator.html">Receipt</a>
+      <a href="estimate-generator.html">Estimate</a>
+      <a href="invoice-templates.html">Templates</a>
+      <a href="ai-invoice-generator.html">AI Generator</a>
+    </div>
+    <button class="nav-burger" id="burgerBtn" onclick="toggleMenu()" aria-label="Open menu" aria-expanded="false">
+      <span></span><span></span><span></span>
+    </button>
+  </div>
+  <div class="nav-drawer" id="navDrawer" aria-hidden="true">
+    <a href="/" onclick="closeMenu()">Invoice Generator</a>
+    <a href="receipt-generator.html" onclick="closeMenu()">Receipt Generator</a>
+    <a href="estimate-generator.html" onclick="closeMenu()">Estimate Generator</a>
+    <a href="proforma-invoice-generator.html" onclick="closeMenu()">Proforma Invoice</a>
+    <a href="credit-note-generator.html" onclick="closeMenu()">Credit Note</a>
+    <a href="ai-invoice-generator.html" onclick="closeMenu()">AI Invoice Generator</a>
+    <a href="invoice-templates.html" onclick="closeMenu()">Invoice Templates</a>
+    <a href="invoice-template-download.html" onclick="closeMenu()">Download Templates</a>
   </div>
 </nav>
 <div class="hero-pg">
@@ -162,12 +201,28 @@ footer{background:#fff;border-top:1px solid #e2e8f0;padding:32px 20px}
   <div class="related"><a href="invoice-template-designer.html" class="rel-card"><strong>Designer Invoice Template</strong><span>For graphic & UI designers</span></a><a href="invoice-template-consultant.html" class="rel-card"><strong>Consultant Invoice Template</strong><span>For consultants & coaches</span></a><a href="invoice-template-developer.html" class="rel-card"><strong>Developer Invoice Template</strong><span>For web & app developers</span></a></div>
 
 </div>
-<footer>
-  <div class="footer-inner">
-    <div class="footer-links">
+<footer role="contentinfo">
+  <div class="fi" style="max-width:1100px;margin:0 auto">
+    <nav class="fl" aria-label="Footer links" style="display:flex;gap:10px;flex-wrap:wrap;margin-bottom:10px">
       <a href="/">Invoice Generator</a>
       <a href="receipt-generator.html">Receipt Generator</a>
       <a href="estimate-generator.html">Estimate Generator</a>
+      <a href="proforma-invoice-generator.html">Proforma Invoice</a>
+      <a href="credit-note-generator.html">Credit Note</a>
+      <a href="ai-invoice-generator.html">AI Invoice Generator</a>
+      <a href="invoice-template-download.html">Download Templates</a>
+      <a href="invoice-generator-uk.html">UK Invoice Generator</a>
+      <a href="invoice-generator-australia.html">Australia Invoice</a>
+      <a href="invoice-generator-canada.html">Canada Invoice</a>
+      <a href="invoice-generator-india.html">India Invoice</a>
+      <a href="invoice-generator-morocco.html">Morocco Invoice</a>
+      <a href="invoice-templates.html">Invoice Templates</a>
+      <a href="invoice-template-style-minimal.html">Minimal Template</a>
+      <a href="invoice-template-style-classic.html">Classic Template</a>
+      <a href="invoice-template-style-modern.html">Modern Template</a>
+      <a href="invoice-template-style-bold.html">Bold Template</a>
+      <a href="invoice-template-style-colorful.html">Colorful Template</a>
+      <a href="invoice-template-style-elegant.html">Elegant Template</a>
       <a href="invoice-template-freelancer.html">Freelancer Invoice</a>
       <a href="invoice-template-photographer.html">Photographer Invoice</a>
       <a href="invoice-template-designer.html">Designer Invoice</a>
@@ -177,13 +232,33 @@ footer{background:#fff;border-top:1px solid #e2e8f0;padding:32px 20px}
       <a href="blog-how-to-write-an-invoice.html">How to Write an Invoice</a>
       <a href="blog-invoice-payment-terms.html">Payment Terms Guide</a>
       <a href="blog-free-invoice-template-freelancers.html">Free Invoice Template</a>
-      <a href="about.html">About</a><a href="privacy.html">Privacy</a>
-      <a href="terms.html">Terms</a><a href="contact.html">Contact</a>
-    </div>
-    <p class="footer-copy">© 2026 InvoiceFree. Free invoice, receipt & estimate generator for freelancers and small businesses.</p>
+      <a href="about.html">About</a>
+      <a href="privacy.html">Privacy Policy</a>
+      <a href="terms.html">Terms of Service</a>
+      <a href="contact.html">Contact</a>
+    </nav>
+    <p style="font-size:12px;color:#94a3b8;margin-bottom:6px;line-height:1.6">Free invoice generator, receipt generator, estimate generator, proforma invoice, and credit note generator for freelancers, contractors and small businesses.</p>
+    <p style="font-size:11px;color:#94a3b8">&#169; 2026 InvoiceFree. All rights reserved.</p>
   </div>
 </footer>
 <!-- Google AdSense: deferred -->
 <script>(function(){var s=document.createElement('script');s.async=true;s.src='https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4036780477567730';s.crossOrigin='anonymous';document.body.appendChild(s);})();</script>
+<script>
+function toggleMenu(){
+  var btn=document.getElementById('burgerBtn');
+  var drawer=document.getElementById('navDrawer');
+  if(!btn||!drawer)return;
+  var open=drawer.classList.toggle('open');
+  btn.classList.toggle('open',open);
+  btn.setAttribute('aria-expanded',String(open));
+  drawer.setAttribute('aria-hidden',String(!open));
+}
+function closeMenu(){
+  var btn=document.getElementById('burgerBtn');
+  var drawer=document.getElementById('navDrawer');
+  if(btn)btn.classList.remove('open');
+  if(drawer){drawer.classList.remove('open');drawer.setAttribute('aria-hidden','true');}
+}
+</script>
 </body>
 </html>

@@ -35,6 +35,25 @@
 }
 .dark-btn{background:var(--bg3);border:1px solid var(--bd);border-radius:7px;padding:5px 10px;cursor:pointer;font-size:13px;color:var(--tx2);display:flex;align-items:center;gap:5px;font-family:'DM Sans',sans-serif;transition:background .15s}
 .dark-btn:hover{background:var(--bd)}
+/* === NAV === */
+nav{background:var(--bg);border-bottom:1px solid var(--bd);position:sticky;top:0;z-index:100}
+.nav-in{max-width:1120px;margin:0 auto;padding:0 16px;display:flex;align-items:center;justify-content:space-between;height:52px;gap:8px}
+.nav-logo{font-weight:600;font-size:16px;color:var(--tx);text-decoration:none;display:flex;align-items:center;gap:7px;flex-shrink:0}
+.nav-logo span{color:var(--ac);font-style:normal}
+.nav-links{display:flex;align-items:center;gap:4px}
+.nav-links a{font-size:13px;color:var(--tx2);text-decoration:none;padding:5px 10px;border-radius:6px;transition:background .15s;white-space:nowrap}
+.nav-links a:hover{background:var(--bg3);color:var(--tx)}
+.nav-burger{display:none;flex-direction:column;justify-content:space-between;width:28px;height:20px;background:none;border:none;cursor:pointer;padding:0}
+.nav-burger span{display:block;width:20px;height:2px;background:var(--tx2);border-radius:2px;transition:all .2s}
+.nav-burger.open span:nth-child(1){transform:translateY(6px) rotate(45deg)}
+.nav-burger.open span:nth-child(2){opacity:0}
+.nav-burger.open span:nth-child(3){transform:translateY(-6px) rotate(-45deg)}
+.nav-drawer{display:none;flex-direction:column;gap:4px;padding:10px 14px 14px;background:var(--bg);border-bottom:1px solid var(--bd)}
+.nav-drawer.open{display:flex}
+.nav-drawer a{font-size:14px;color:var(--tx2);text-decoration:none;padding:10px 12px;border-radius:8px;transition:background .15s}
+.nav-drawer a:hover{background:var(--bg3)}
+.nav-drawer .dark-btn{align-self:flex-start;margin-top:4px}
+@media(max-width:768px){.nav-links{display:none}.nav-burger{display:flex}}
 
 /* === COLOR PICKER === */
 .color-picker-row{display:flex;align-items:center;gap:7px;flex-wrap:wrap;margin-bottom:0}
@@ -160,6 +179,7 @@ footer{background:var(--bg);border-top:1px solid var(--bd);padding:28px 20px}
 .fi{max-width:1120px;margin:0 auto}
 .fl{display:flex;gap:10px;flex-wrap:wrap;margin-bottom:10px}
 .fl a{font-size:12px;color:var(--tx2);text-decoration:none}.fl a:hover{color:var(--ac)}
+.fd{font-size:12px;color:var(--tx3);margin-bottom:8px;line-height:1.6}
 .fc{font-size:11px;color:var(--tx3)}
 .toast{position:fixed;bottom:20px;left:50%;transform:translateX(-50%) translateY(10px);background:#0f172a;color:#fff;padding:9px 18px;border-radius:8px;font-size:13px;font-weight:500;opacity:0;transition:all .25s;z-index:9999;pointer-events:none;white-space:nowrap}
 .toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
@@ -191,11 +211,32 @@ footer{background:var(--bg);border-top:1px solid var(--bd);padding:28px 20px}
 <body>
 <nav>
   <div class="nav-in">
-    <a href="/" class="logo"><svg width="20" height="20" viewBox="0 0 20 20" fill="none"><rect width="20" height="20" rx="4" fill="#2563EB"/><rect x="5" y="6" width="7" height="1.5" rx=".75" fill="white"/><rect x="5" y="9.25" width="10" height="1.5" rx=".75" fill="white"/><rect x="5" y="12.5" width="5" height="1.5" rx=".75" fill="white"/></svg>Invoice<em>Free</em></a>
-    <a href="/" class="back">← Free Invoice Generator</a>
-    <button class="dark-btn" onclick="toggleDark()" aria-label="Toggle dark mode">
-      <span id="darkBtnIcon">Dark</span>
+    <a href="/" class="nav-logo" aria-label="InvoiceFree home">
+      <svg width="20" height="20" viewBox="0 0 20 20" fill="none" aria-hidden="true"><rect width="20" height="20" rx="4" fill="#2563EB"/><rect x="5" y="6" width="7" height="1.5" rx=".75" fill="white"/><rect x="5" y="9.25" width="10" height="1.5" rx=".75" fill="white"/><rect x="5" y="12.5" width="5" height="1.5" rx=".75" fill="white"/></svg>
+      Invoice<span>Free</span>
+    </a>
+    <div class="nav-links" role="navigation">
+      <a href="/">Invoice Generator</a>
+      <a href="receipt-generator.html">Receipt</a>
+      <a href="estimate-generator.html">Estimate</a>
+      <a href="invoice-templates.html">Templates</a>
+      <a href="ai-invoice-generator.html">AI Generator</a>
+      <button class="dark-btn" id="darkBtn" onclick="toggleDark()" aria-label="Toggle dark mode"><span id="dkIcon">&#127769;</span><span id="dkLbl">Dark</span></button>
+    </div>
+    <button class="nav-burger" id="burgerBtn" onclick="toggleMenu()" aria-label="Open menu" aria-expanded="false">
+      <span></span><span></span><span></span>
     </button>
+  </div>
+  <div class="nav-drawer" id="navDrawer" aria-hidden="true">
+    <a href="/" onclick="closeMenu()">Invoice Generator</a>
+    <a href="receipt-generator.html" onclick="closeMenu()">Receipt Generator</a>
+    <a href="estimate-generator.html" onclick="closeMenu()">Estimate Generator</a>
+    <a href="proforma-invoice-generator.html" onclick="closeMenu()">Proforma Invoice</a>
+    <a href="credit-note-generator.html" onclick="closeMenu()">Credit Note</a>
+    <a href="ai-invoice-generator.html" onclick="closeMenu()">AI Invoice Generator</a>
+    <a href="invoice-templates.html" onclick="closeMenu()">Invoice Templates</a>
+    <a href="invoice-template-download.html" onclick="closeMenu()">Download Templates</a>
+    <button class="dark-btn" onclick="toggleDark();closeMenu()" aria-label="Toggle dark mode"><span id="dkIcon2">&#127769;</span> Dark mode</button>
   </div>
 </nav>
 <div class="hero">
@@ -355,21 +396,44 @@ footer{background:var(--bg);border-top:1px solid var(--bd);padding:28px 20px}
   </div>
 </div>
 
-<footer>
+<footer role="contentinfo">
   <div class="fi">
-    <nav class="fl">
-      <a href="/">Invoice Generator</a><a href="receipt-generator.html">Receipt Generator</a>
-      <a href="estimate-generator.html">Estimate Generator</a><a href="invoice-templates.html">Invoice Templates</a>
-      <a href="invoice-template-style-minimal.html">Minimal Template</a><a href="invoice-template-style-classic.html">Classic Template</a>
-      <a href="invoice-template-style-modern.html">Modern Template</a><a href="invoice-template-style-bold.html">Bold Template</a>
-      <a href="invoice-template-style-colorful.html">Colorful Template</a><a href="invoice-template-style-elegant.html">Elegant Template</a>
-      <a href="invoice-template-freelancer.html">Freelancer</a><a href="invoice-template-photographer.html">Photographer</a>
-      <a href="invoice-template-designer.html">Designer</a><a href="invoice-template-contractor.html">Contractor</a>
-      <a href="invoice-template-consultant.html">Consultant</a><a href="invoice-template-developer.html">Developer</a>
+    <nav class="fl" aria-label="Footer links">
+      <a href="/">Invoice Generator</a>
+      <a href="receipt-generator.html">Receipt Generator</a>
+      <a href="estimate-generator.html">Estimate Generator</a>
+      <a href="proforma-invoice-generator.html">Proforma Invoice</a>
+      <a href="credit-note-generator.html">Credit Note</a>
+      <a href="ai-invoice-generator.html">AI Invoice Generator</a>
+      <a href="invoice-template-download.html">Download Templates</a>
+      <a href="invoice-generator-uk.html">UK Invoice Generator</a>
+      <a href="invoice-generator-australia.html">Australia Invoice</a>
+      <a href="invoice-generator-canada.html">Canada Invoice</a>
+      <a href="invoice-generator-india.html">India Invoice</a>
+      <a href="invoice-generator-morocco.html">Morocco Invoice</a>
+      <a href="invoice-templates.html">Invoice Templates</a>
+      <a href="invoice-template-style-minimal.html">Minimal Template</a>
+      <a href="invoice-template-style-classic.html">Classic Template</a>
+      <a href="invoice-template-style-modern.html">Modern Template</a>
+      <a href="invoice-template-style-bold.html">Bold Template</a>
+      <a href="invoice-template-style-colorful.html">Colorful Template</a>
+      <a href="invoice-template-style-elegant.html">Elegant Template</a>
+      <a href="invoice-template-freelancer.html">Freelancer Invoice</a>
+      <a href="invoice-template-photographer.html">Photographer Invoice</a>
+      <a href="invoice-template-designer.html">Designer Invoice</a>
+      <a href="invoice-template-contractor.html">Contractor Invoice</a>
+      <a href="invoice-template-consultant.html">Consultant Invoice</a>
+      <a href="invoice-template-developer.html">Developer Invoice</a>
       <a href="blog-how-to-write-an-invoice.html">How to Write an Invoice</a>
-      <a href="about.html">About</a><a href="privacy.html">Privacy</a><a href="terms.html">Terms</a><a href="contact.html">Contact</a>
+      <a href="blog-invoice-payment-terms.html">Payment Terms Guide</a>
+      <a href="blog-free-invoice-template-freelancers.html">Free Invoice Template</a>
+      <a href="about.html">About</a>
+      <a href="privacy.html">Privacy Policy</a>
+      <a href="terms.html">Terms of Service</a>
+      <a href="contact.html">Contact</a>
     </nav>
-    <p class="fc">© 2026 InvoiceFree. Free invoice templates — minimal, classic, modern, bold, colorful and elegant.</p>
+    <p class="fd">Free invoice generator, receipt generator, estimate generator, proforma invoice, and credit note generator. Professional PDF invoices for freelancers, contractors, consultants, designers, photographers and small businesses.</p>
+    <p class="fc">&#169; 2026 InvoiceFree. All rights reserved.</p>
   </div>
 </footer>
 <div class="toast" id="toast"></div>
@@ -626,6 +690,21 @@ function initDark(){
   var isDark=p==='dark'||(p===null&&window.matchMedia('(prefers-color-scheme: dark)').matches);
   if(isDark)applyDark(true);
 }
+function toggleMenu(){
+  var btn=document.getElementById('burgerBtn');
+  var drawer=document.getElementById('navDrawer');
+  if(!btn||!drawer)return;
+  var open=drawer.classList.toggle('open');
+  btn.classList.toggle('open',open);
+  btn.setAttribute('aria-expanded',String(open));
+  drawer.setAttribute('aria-hidden',String(!open));
+}
+function closeMenu(){
+  var btn=document.getElementById('burgerBtn');
+  var drawer=document.getElementById('navDrawer');
+  if(btn)btn.classList.remove('open');
+  if(drawer){drawer.classList.remove('open');drawer.setAttribute('aria-hidden','true');}
+}
 function toggleDark(){
   var d=document.documentElement.getAttribute('data-theme')==='dark';
   applyDark(!d);
@@ -633,8 +712,10 @@ function toggleDark(){
 }
 function applyDark(on){
   document.documentElement.setAttribute('data-theme',on?'dark':'light');
-  var btn=document.getElementById('darkBtnIcon');
-  if(btn)btn.textContent=on?'Light':'Dark';
+  var icon=document.getElementById('dkIcon');if(icon)icon.textContent=on?'Light':'Dark';
+  var icon2=document.getElementById('dkIcon2');if(icon2)icon2.textContent=on?'Light':'Dark';
+  var icon3=document.getElementById('darkBtnIcon');if(icon3)icon3.textContent=on?'Light':'Dark';
+  var lbl=document.getElementById('dkLbl');if(lbl)lbl.textContent=on?'Light':'Dark';
 }
 initDark();
 </script>

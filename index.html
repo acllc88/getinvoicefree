@@ -59,6 +59,8 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="preload" href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600&family=DM+Mono:wght@400;500&display=swap" as="style" onload="this.onload=null;this.rel='stylesheet'">
 <noscript><link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet"></noscript>
+<!-- Arabic font loaded on demand -->
+<style id="arabic-font-style"></style>
 
 <style>
 :root {
@@ -1029,7 +1031,23 @@ function render(){
       <td>${c}${(pf(i.qty)*pf(i.price)).toFixed(2)}</td>
     </tr>`).join('');
 
-  g('preview').innerHTML=`
+  // Apply RTL + Arabic font when Arabic language selected
+  const langEl = document.getElementById('invoiceLang');
+  const isArabic = langEl && langEl.value === 'ar';
+  const previewEl = document.getElementById('preview');
+  if(isArabic){
+    previewEl.setAttribute('dir','rtl');
+    previewEl.style.fontFamily = "'Noto Sans Arabic', 'Arial', sans-serif";
+    // Load Arabic font if not already loaded
+    if(!document.getElementById('arabic-font-style').textContent){
+      document.getElementById('arabic-font-style').textContent = "@import url('https://fonts.googleapis.com/css2?family=Noto+Sans+Arabic:wght@400;600;700&display=swap');";
+    }
+  } else {
+    previewEl.removeAttribute('dir');
+    previewEl.style.fontFamily = invoiceFont + ',sans-serif';
+  }
+
+    g('preview').innerHTML=`
     <div class="inv-header" style="font-family:${invoiceFont},sans-serif">
       <div class="inv-logo">${logoData?`<img src="${logoData}" alt="${esc(biz)} logo">`:`<div style="font-size:18px;font-weight:700;color:${accentColor}">${esc(biz)}</div>`}</div>
       <div class="inv-title"><h1 style="color:${accentColor}">${getLang().invoice}</h1><p>#${esc(v('invNum')||'INV-001')}</p></div>
@@ -1126,14 +1144,32 @@ async function dlPDF(){
     preview.style.color = '#0f172a';
 
     // Wait a frame for styles to apply
-    await new Promise(r => setTimeout(r, 80));
+    // Await fonts (critical for Arabic/RTL text rendering in html2canvas)
+    await document.fonts.ready;
+    await new Promise(r => setTimeout(r, 120));
+
+    const langEl2 = document.getElementById('invoiceLang');
+    const isArabicPDF = langEl2 && langEl2.value === 'ar';
 
     const canvas = await html2canvas(preview, {
-      scale: 2,
+      scale: 3,
       useCORS: true,
+      allowTaint: true,
       backgroundColor: '#ffffff',
       logging: false,
-      removeContainer: true
+      removeContainer: true,
+      // Force font rendering
+      onclone: function(clonedDoc) {
+        const clonedPreview = clonedDoc.getElementById('preview');
+        if(clonedPreview && isArabicPDF){
+          clonedPreview.style.fontFamily = "'Noto Sans Arabic', Arial, sans-serif";
+          clonedPreview.setAttribute('dir','rtl');
+          // Add font import to cloned doc
+          const style = clonedDoc.createElement('style');
+          style.textContent = "@import url('https://fonts.googleapis.com/css2?family=Noto+Sans+Arabic:wght@400;600;700&display=swap');";
+          clonedDoc.head.appendChild(style);
+        }
+      }
     });
 
     // Restore theme
@@ -1141,7 +1177,10 @@ async function dlPDF(){
     preview.style.background = '';
     preview.style.color = '';
 
-    const imgData = canvas.toDataURL('image/jpeg', 0.97);
+    const langEl3 = document.getElementById('invoiceLang');
+    const usePN = langEl3 && langEl3.value === 'ar';
+    const imgData = usePN ? canvas.toDataURL('image/png') : canvas.toDataURL('image/jpeg', 0.97);
+    const imgFmt = usePN ? 'PNG' : 'JPEG';
     const pdf = new jsPDF({ orientation: 'portrait', unit: 'mm', format: 'a4' });
 
     const pageW = pdf.internal.pageSize.getWidth();
@@ -1152,14 +1191,14 @@ async function dlPDF(){
 
     // If invoice is taller than one page, split across pages
     if (imgH <= pageH - margin * 2) {
-      pdf.addImage(imgData, 'JPEG', margin, margin, usableW, imgH);
+      pdf.addImage(imgData, imgFmt || 'JPEG', margin, margin, usableW, imgH);
     } else {
       let yOffset = 0;
       const pageImgH = pageH - margin * 2;
       const totalPages = Math.ceil(imgH / pageImgH);
       for (let p = 0; p < totalPages; p++) {
         if (p > 0) pdf.addPage();
-        pdf.addImage(imgData, 'JPEG', margin, margin - yOffset, usableW, imgH);
+        pdf.addImage(imgData, imgFmt || 'JPEG', margin, margin - yOffset, usableW, imgH);
         yOffset += pageImgH;
       }
     }
