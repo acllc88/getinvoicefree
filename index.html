@@ -1056,3 +1056,343 @@ function render(){
     </div>
     ${v('notes')?`<div class="inv-notes"><h3>${getLang().notes}</h3><p>${esc(v('notes'))}</p></div>`:''}
     <div class="inv-foot">${getLang().thanks}</div>`;
+}
+
+// ---- SAVE / TRACKER ----
+function saveInv(){
+  const c=cur(), {tot}=calcs();
+  invoices.unshift({id:Date.now(),num:v('invNum')||'INV-?',client:v('cliName')||'Unknown',date:v('invDate')||new Date().toISOString().split('T')[0],total:c+tot.toFixed(2),status:'unpaid'});
+  if(invoices.length>20)invoices=invoices.slice(0,20);
+  try{localStorage.setItem('inv_list',JSON.stringify(invoices));const n=parseInt(localStorage.getItem('inv_c')||'0');localStorage.setItem('inv_c',n+1)}catch(e){}
+  renderTrk(); toast('Invoice saved ✓');
+}
+function renderTrk(){
+  const el=g('trkList');
+  if(!invoices.length){el.innerHTML='<div class="tracker-empty">No saved invoices yet. Click Save after filling your invoice.</div>';return}
+  el.innerHTML=invoices.map(i=>`
+    <div class="trk-item">
+      <div class="trk-info"><strong>${esc(i.num)} · ${esc(i.client)}</strong><span>${fd(i.date)}</span></div>
+      <div class="trk-amt">${esc(i.total)}</div>
+      <span class="st ${i.status}" onclick="cycleStatus(${i.id})" role="button" tabindex="0" aria-label="Status: ${i.status}">${i.status.charAt(0).toUpperCase()+i.status.slice(1)}</span>
+      <button class="trk-del" onclick="delInv(${i.id})" aria-label="Delete ${esc(i.num)}">×</button>
+    </div>`).join('');
+}
+function cycleStatus(id){
+  const i=invoices.find(x=>x.id===id); if(!i)return;
+  const c=['unpaid','sent','paid'];
+  i.status=c[(c.indexOf(i.status)+1)%c.length];
+  try{localStorage.setItem('inv_list',JSON.stringify(invoices))}catch(e){}
+  renderTrk();
+}
+function delInv(id){
+  invoices=invoices.filter(i=>i.id!==id);
+  try{localStorage.setItem('inv_list',JSON.stringify(invoices))}catch(e){}
+  renderTrk();
+}
+
+// ---- PDF ----
+function _loadScript(src){
+  return new Promise((res,rej)=>{
+    if(document.querySelector('script[src="'+src+'"]')){res();return;}
+    const s=document.createElement('script');
+    s.src=src; s.onload=res; s.onerror=rej;
+    document.head.appendChild(s);
+  });
+}
+
+async function dlPDF(){
+  const btn = document.querySelector('.btn-pdf');
+  const prevHTML = btn.innerHTML;
+  btn.innerHTML = '⏳ Loading...';
+  btn.disabled = true;
+
+  try {
+    if(!window.html2canvas){
+      btn.innerHTML='⏳ Loading PDF engine...';
+      await _loadScript('https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js');
+    }
+    if(!window.jspdf){
+      await _loadScript('https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js');
+    }
+    btn.innerHTML='⏳ Generating PDF...';
+    const { jsPDF } = window.jspdf;
+    const preview = document.getElementById('preview');
+
+    // Temporarily force white background & light theme for capture
+    const html = document.documentElement;
+    const wasDark = html.getAttribute('data-theme') === 'dark';
+    if (wasDark) html.setAttribute('data-theme', 'light');
+    preview.style.background = '#ffffff';
+    preview.style.color = '#0f172a';
+
+    // Wait a frame for styles to apply
+    await new Promise(r => setTimeout(r, 80));
+
+    const canvas = await html2canvas(preview, {
+      scale: 2,
+      useCORS: true,
+      backgroundColor: '#ffffff',
+      logging: false,
+      removeContainer: true
+    });
+
+    // Restore theme
+    if (wasDark) html.setAttribute('data-theme', 'dark');
+    preview.style.background = '';
+    preview.style.color = '';
+
+    const imgData = canvas.toDataURL('image/jpeg', 0.97);
+    const pdf = new jsPDF({ orientation: 'portrait', unit: 'mm', format: 'a4' });
+
+    const pageW = pdf.internal.pageSize.getWidth();
+    const pageH = pdf.internal.pageSize.getHeight();
+    const margin = 10;
+    const usableW = pageW - margin * 2;
+    const imgH = (canvas.height * usableW) / canvas.width;
+
+    // If invoice is taller than one page, split across pages
+    if (imgH <= pageH - margin * 2) {
+      pdf.addImage(imgData, 'JPEG', margin, margin, usableW, imgH);
+    } else {
+      let yOffset = 0;
+      const pageImgH = pageH - margin * 2;
+      const totalPages = Math.ceil(imgH / pageImgH);
+      for (let p = 0; p < totalPages; p++) {
+        if (p > 0) pdf.addPage();
+        pdf.addImage(imgData, 'JPEG', margin, margin - yOffset, usableW, imgH);
+        yOffset += pageImgH;
+      }
+    }
+
+    const invNum = v('invNum') || 'Invoice';
+    const bizName = v('bizName');
+    const filename = (bizName ? bizName.replace(/[^a-zA-Z0-9]/g,'-') + '-' : '') + invNum + '.pdf';
+    pdf.save(filename);
+    toast('PDF downloaded ✓');
+
+  } catch(err) {
+    console.error('PDF error:', err);
+    toast('Error — trying print fallback...');
+    setTimeout(() => window.print(), 400);
+  } finally {
+    btn.innerHTML = prevHTML;
+    btn.disabled = false;
+  }
+}
+
+// ---- SHARE (Web Share API) ----
+function shareInv(){
+  if(navigator.share){
+    navigator.share({title:'Invoice from '+v('bizName'),text:`Invoice ${v('invNum')} — Total: ${g('totDisp').textContent}`,url:window.location.href}).catch(()=>{});
+  } else {
+    openEmailPanel();
+  }
+}
+
+// ---- EMAIL ----
+function openEmailPanel(){
+  g('emailModal').classList.add('open');
+  setTimeout(()=>g('emailTo').focus(),100);
+}
+async function doEmailPDF(){
+  const to=g('emailTo').value.trim();
+  if(!to){toast('Enter client email first');g('emailTo').focus();return;}
+  const btn=g('emailSendBtn'),txt=g('emailBtnText');
+  const orig=txt.innerHTML;txt.innerHTML='⏳ Generating PDF...';btn.disabled=true;
+  try{
+    if(!window.html2canvas) await new Promise((res,rej)=>{const s=document.createElement('script');s.src='https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js';s.onload=res;s.onerror=rej;document.head.appendChild(s);});
+    if(!window.jspdf) await new Promise((res,rej)=>{const s=document.createElement('script');s.src='https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js';s.onload=res;s.onerror=rej;document.head.appendChild(s);});
+    const{jsPDF}=window.jspdf;
+    const el=g('preview');
+    const canvas=await html2canvas(el,{scale:2,useCORS:true,backgroundColor:'#ffffff',logging:false});
+    const img=canvas.toDataURL('image/jpeg',0.97);
+    const pdf=new jsPDF({orientation:'portrait',unit:'mm',format:'a4'});
+    const pw=pdf.internal.pageSize.getWidth(),ph=pdf.internal.pageSize.getHeight(),m=15;
+    const uw=pw-m*2,ih=(canvas.height*uw)/canvas.width;
+    if(ih<=ph-m*2){pdf.addImage(img,'JPEG',m,m,uw,ih);}
+    else{let y=0,pph=ph-m*2,pages=Math.ceil(ih/pph);for(let p=0;p<pages;p++){if(p>0)pdf.addPage();pdf.addImage(img,'JPEG',m,m-y,uw,ih);y+=pph;}}
+    const fname=(v('bizName')?v('bizName').replace(/[^a-zA-Z0-9]/g,'-')+'-':'')+(v('invNum')||'Invoice')+'.pdf';
+    txt.innerHTML='⏳ Opening email...';
+    pdf.save(fname);
+    const sub=encodeURIComponent('Invoice '+v('invNum')+' from '+(v('bizName')||'InvoiceFree'));
+    const body=encodeURIComponent('Hi '+v('cliName')+',' + '\n\nPlease find invoice '+v('invNum')+' for '+g('totDisp').textContent+' attached to this email.\n\nPayment is due by '+fd(v('dueDate'))+'.\n\n'+(v('notes')?'Notes: '+v('notes')+'\n\n':'')+'Thank you,\n'+(v('bizName')||''));
+    setTimeout(()=>{window.location.href='mailto:'+to+'?subject='+sub+'&body='+body;},600);
+    setTimeout(()=>{closeModal();toast('✓ PDF saved — attach it to the email that opened');},1200);
+  }catch(err){console.error(err);toast('Error generating PDF');}
+  finally{txt.innerHTML=orig;btn.disabled=false;}
+}
+function doSendEmail(){doEmailPDF();}
+function closeModal(){g('emailModal').classList.remove('open')}
+
+// ---- EMAIL CAPTURE ----
+function emailSubmit(e){
+  e.preventDefault();
+  const email=e.target.querySelector('input[type="email"]').value;
+  // Replace with your email service (Mailchimp, ConvertKit, Formspree)
+  toast('Thanks! Check your inbox ✓');
+  e.target.reset();
+}
+
+// ---- FAQ ----
+function toggleFaq(btn){
+  const item=btn.closest('.faq-item'), open=item.classList.contains('open');
+  document.querySelectorAll('.faq-item').forEach(i=>{i.classList.remove('open');i.querySelector('.faq-a').hidden=true;i.querySelector('.faq-q').setAttribute('aria-expanded','false')});
+  if(!open){item.classList.add('open');item.querySelector('.faq-a').hidden=false;btn.setAttribute('aria-expanded','true')}
+}
+
+// ---- ACCENT COLOR ----
+function setColor(hex, btn){
+  accentColor = hex;
+  document.querySelectorAll('.color-swatch').forEach(s=>s.classList.remove('active'));
+  if(btn) btn.classList.add('active');
+  render();
+  try{localStorage.setItem('inv_color',hex);}catch(e){}
+}
+function loadColor(){
+  try{
+    const saved=localStorage.getItem('inv_color');
+    if(saved){
+      accentColor=saved;
+      const sw=document.querySelector('.color-swatch[data-color="'+saved+'"]');
+      if(sw){document.querySelectorAll('.color-swatch').forEach(s=>s.classList.remove('active'));sw.classList.add('active');}
+    }
+  }catch(e){}
+}
+
+// ---- FONT ----
+function setFont(font, btn){
+  invoiceFont=font;
+  document.querySelectorAll('.font-btn').forEach(b=>b.classList.remove('active'));
+  if(btn) btn.classList.add('active');
+  render();
+  try{localStorage.setItem('inv_font',font);}catch(e){}
+}
+function loadFont(){
+  try{
+    const f=localStorage.getItem('inv_font');
+    if(f){
+      invoiceFont=f;
+      const btn=document.querySelector('.font-btn[data-font="'+f+'"]');
+      if(btn){document.querySelectorAll('.font-btn').forEach(b=>b.classList.remove('active'));btn.classList.add('active');}
+    }
+  }catch(e){}
+}
+
+// ---- SHIPPING ----
+function toggleShipping(){
+  const show=g('showShipping')&&g('showShipping').checked;
+  if(g('shippingRow'))g('shippingRow').style.display=show?'block':'none';
+  render();
+}
+
+// ---- SHARE LINK ----
+function copyShareLink(){
+  const inp=g('shareLinkUrl');
+  if(!inp)return;
+  inp.select();inp.setSelectionRange(0,99999);
+  try{navigator.clipboard.writeText(inp.value).then(()=>toast('Link copied ✓')).catch(()=>{document.execCommand('copy');toast('Link copied ✓');});}
+  catch(e){document.execCommand('copy');toast('Link copied ✓');}
+}
+function loadFromUrl(){
+  try{
+    const params=new URLSearchParams(window.location.search);
+    const inv=params.get('inv');
+    if(!inv)return;
+    const data=JSON.parse(decodeURIComponent(escape(atob(inv))));
+    if(data.biz)g('bizName').value=data.biz;
+    if(data.bizAddr)g('bizAddr').value=data.bizAddr;
+    if(data.bizEmail)g('bizEmail').value=data.bizEmail;
+    if(data.bizPhone)g('bizPhone').value=data.bizPhone;
+    if(data.cli)g('cliName').value=data.cli;
+    if(data.cliAddr)g('cliAddr').value=data.cliAddr;
+    if(data.cliEmail)g('cliEmail').value=data.cliEmail;
+    if(data.num)g('invNum').value=data.num;
+    if(data.date)g('invDate').value=data.date;
+    if(data.due)g('dueDate').value=data.due;
+    if(data.cur){const sel=g('currency');if(sel)for(let o of sel.options)if(o.value===data.cur){o.selected=true;break;}}
+    if(data.tax)g('taxRate').value=data.tax;
+    if(data.disc)g('discount').value=data.disc;
+    if(data.notes)g('notes').value=data.notes;
+    if(data.items&&data.items.length){items=data.items.map((it,i)=>({id:Date.now()+i,desc:it.d,qty:it.q,price:it.p}));renderItems();}
+    if(data.color)setColor(data.color,document.querySelector('.color-swatch[data-color="'+data.color+'"]'));
+    if(data.font)setFont(data.font,document.querySelector('.font-btn[data-font="'+data.font+'"]'));
+    render();
+    toast('Invoice loaded from shared link ✓');
+    window.history.replaceState({},'',window.location.pathname);
+  }catch(e){console.error('loadFromUrl:',e);}
+}
+
+// ---- DARK MODE ----
+function initDark(){
+  const p=localStorage.getItem('inv_theme');
+  const isDark=p==='dark'||(!p&&window.matchMedia('(prefers-color-scheme: dark)').matches);
+  if(isDark)applyDark(true);
+}
+function toggleDark(){
+  const d=document.documentElement.getAttribute('data-theme')==='dark';
+  applyDark(!d);
+  try{localStorage.setItem('inv_theme',d?'light':'dark')}catch(e){}
+}
+function applyDark(on){
+  document.documentElement.setAttribute('data-theme',on?'dark':'light');
+  ['dkIcon','dkIcon2'].forEach(id=>{const el=g(id);if(el)el.textContent=on?'☀️':'🌙'});
+  const lbl=g('dkLbl');if(lbl)lbl.textContent=on?'Light':'Dark';
+}
+
+// ---- COOKIE ----
+function initCookie(){if(localStorage.getItem('inv_ck'))g('cookie-banner').style.display='none'}
+function acceptCookies(){localStorage.setItem('inv_ck','1');g('cookie-banner').style.display='none'}
+function declineCookies(){g('cookie-banner').style.display='none'}
+
+// ---- AUTO SAVE ----
+function autoSave(){
+  try{localStorage.setItem('inv_d',JSON.stringify({bizName:v('bizName'),bizAddr:v('bizAddr'),bizEmail:v('bizEmail'),bizPhone:v('bizPhone'),cliName:v('cliName'),cliAddr:v('cliAddr'),cliEmail:v('cliEmail'),notes:v('notes'),logo:logoData}))}catch(e){}
+}
+
+// ---- CLEAR ----
+function clearForm(){
+  if(!confirm('Clear all invoice data and start fresh?'))return;
+  // Clear all text fields
+  ['bizName','bizAddr','bizEmail','bizPhone','cliName','cliAddr','cliEmail','notes'].forEach(k=>g(k).value='');
+  // Reset numbers
+  g('taxRate').value='0'; g('discount').value='0';
+  // Reset currency to USD
+  g('currency').value='$';
+  // Reset logo
+  logoData=null;
+  g('logoImg').style.display='none';
+  g('logoImg').src='';
+  g('logoHint').style.display='';
+  g('logoIn').value='';
+  // Reset line items
+  items=[]; addItem(); addItem();
+  // Reset dates and invoice number
+  setDates(); autoNum();
+  // Clear localStorage so old data doesn't reload
+  try{localStorage.removeItem('inv_d');}catch(e){}
+  // Re-render preview
+  render();
+  toast('✓ New invoice started');
+}
+
+// ---- TOAST ----
+function toast(msg){
+  const t=g('toast'); t.textContent=msg; t.classList.add('show');
+  setTimeout(()=>t.classList.remove('show'),2600);
+}
+
+// ---- HELPERS ----
+function g(id){return document.getElementById(id)}
+function v(id){return g(id)?.value?.trim()||''}
+function cur(){return g('currency').value}
+function pf(x){return parseFloat(x)||0}
+function esc(s){return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;')}
+function fd(d){if(!d)return'—';const[y,m,dd]=d.split('-');return`${dd}/${m}/${y}`}
+
+init();
+</script>
+<!-- Google AdSense: deferred to avoid render-blocking -->
+<script>(function(){var s=document.createElement('script');s.async=true;s.src='https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4036780477567730';s.crossOrigin='anonymous';document.body.appendChild(s);})();</script>
+<script>(function(){var s=document.createElement('script');s.async=true;s.src='https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4036780477567730';s.crossOrigin='anonymous';document.body.appendChild(s);})();</script>
+</body>
+</html>
