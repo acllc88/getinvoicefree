@@ -283,14 +283,28 @@ function openInvoiceTool() {
   var inv = window._aiInvoice;
   if (!inv) { window.location.href = '/'; return; }
   try {
-    var params = new URLSearchParams();
-    if (inv.bizName) params.set('biz', inv.bizName);
-    if (inv.cliName) params.set('cli', inv.cliName);
-    if (inv.notes) params.set('notes', inv.notes);
-    if (inv.taxRate) params.set('tax', inv.taxRate);
-    if (inv.items && inv.items.length) params.set('items', JSON.stringify(inv.items));
-    window.location.href = '/?' + params.toString();
-  } catch(e) { window.location.href = '/'; }
+    // Build the same data object that loadFromUrl() expects
+    var data = {
+      biz:   inv.bizName  || '',
+      cli:   inv.cliName  || '',
+      notes: inv.notes    || '',
+      tax:   inv.taxRate  || 0,
+      // items: use short keys {d,q,p} that loadFromUrl maps to desc/qty/price
+      items: (inv.items || []).map(function(it) {
+        return {
+          d: it.desc  || it.d || '',
+          q: it.qty   || it.q || 1,
+          p: it.price || it.p || 0
+        };
+      })
+    };
+    // Encode as base64 exactly like shareInv() does
+    var encoded = btoa(unescape(encodeURIComponent(JSON.stringify(data))));
+    window.location.href = '/?inv=' + encoded;
+  } catch(e) {
+    console.error('openInvoiceTool error:', e);
+    window.location.href = '/';
+  }
 }
 function esc(s) { return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
 </script>

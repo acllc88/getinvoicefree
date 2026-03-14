@@ -36,6 +36,34 @@
 .dark-btn{background:var(--bg3);border:1px solid var(--bd);border-radius:7px;padding:5px 10px;cursor:pointer;font-size:13px;color:var(--tx2);display:flex;align-items:center;gap:5px;font-family:'DM Sans',sans-serif;transition:background .15s}
 .dark-btn:hover{background:var(--bd)}
 
+/* === COLOR PICKER === */
+.color-picker-row{display:flex;align-items:center;gap:7px;flex-wrap:wrap;margin-bottom:0}
+.color-swatch{width:22px;height:22px;border-radius:50%;cursor:pointer;border:2px solid transparent;transition:transform .15s,border-color .15s;flex-shrink:0}
+.color-swatch:hover{transform:scale(1.2)}
+.color-swatch.active{border-color:var(--tx)!important;transform:scale(1.15)}
+/* === FONT SELECTOR === */
+.font-row{display:flex;gap:6px;flex-wrap:wrap}
+.font-btn{background:var(--bg3);border:1px solid var(--bd);border-radius:7px;padding:5px 10px;font-size:12px;font-weight:600;cursor:pointer;color:var(--tx2);transition:all .15s}
+.font-btn:hover{background:var(--bd)}
+.font-btn.active{background:var(--ac);color:#fff;border-color:var(--ac)}
+/* === TOGGLES === */
+.toggle-row{display:flex;align-items:center;gap:10px;margin-bottom:7px}
+.toggle-row label{font-size:12px;color:var(--tx2);cursor:pointer;user-select:none}
+.tog{position:relative;width:34px;height:18px;flex-shrink:0}
+.tog input{opacity:0;width:0;height:0;position:absolute}
+.tog-track{position:absolute;inset:0;background:var(--bd);border-radius:9px;cursor:pointer;transition:background .2s}
+.tog input:checked+.tog-track{background:var(--ac)}
+.tog-track::after{content:'';position:absolute;width:14px;height:14px;border-radius:50%;background:#fff;top:2px;left:2px;transition:left .2s}
+.tog input:checked+.tog-track::after{left:18px}
+/* === LANG SELECT === */
+.lang-sel{background:var(--bg3);border:1px solid var(--bd);border-radius:7px;padding:5px 10px;font-size:13px;color:var(--tx2);font-family:'DM Sans',sans-serif;cursor:pointer;width:100%}
+/* === DRAG HANDLE === */
+.col-drag{width:5%;text-align:center;cursor:grab;color:var(--tx3);font-size:15px;user-select:none}
+.col-drag:active{cursor:grabbing}
+tr.dragging{opacity:.4}
+tr.drag-over td{border-top:2px solid var(--ac)}
+
+
 *{box-sizing:border-box;margin:0;padding:0}
 body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--tx);line-height:1.6}
 a{color:#2563eb;text-decoration:none}a:hover{text-decoration:underline}
@@ -246,6 +274,51 @@ footer{background:var(--bg);border-top:1px solid var(--bd);padding:28px 20px}
       <div class="field"><label>Notes / Payment Terms</label><textarea id="notes" rows="2" placeholder="Thank you for your business!" oninput="render()"></textarea></div>
       <p class="sec">Email Invoice</p>
       <div class="field"><label>Client Email</label><input id="emailTo" type="email" placeholder="client@company.com"></div>
+
+      <p class="sec">Accent Color</p>
+      <div class="color-picker-row" id="colorPicker">
+        <button class="color-swatch active" style="background:#2563eb" data-color="#2563eb" onclick="setAccent('#2563eb',this)" title="Blue"></button>
+        <button class="color-swatch" style="background:#0f172a" data-color="#0f172a" onclick="setAccent('#0f172a',this)" title="Black"></button>
+        <button class="color-swatch" style="background:#7c3aed" data-color="#7c3aed" onclick="setAccent('#7c3aed',this)" title="Purple"></button>
+        <button class="color-swatch" style="background:#dc2626" data-color="#dc2626" onclick="setAccent('#dc2626',this)" title="Red"></button>
+        <button class="color-swatch" style="background:#16a34a" data-color="#16a34a" onclick="setAccent('#16a34a',this)" title="Green"></button>
+        <button class="color-swatch" style="background:#ea580c" data-color="#ea580c" onclick="setAccent('#ea580c',this)" title="Orange"></button>
+        <button class="color-swatch" style="background:#0891b2" data-color="#0891b2" onclick="setAccent('#0891b2',this)" title="Teal"></button>
+        <button class="color-swatch" style="background:#be185d" data-color="#be185d" onclick="setAccent('#be185d',this)" title="Pink"></button>
+        <button class="color-swatch" style="background:#ca8a04" data-color="#ca8a04" onclick="setAccent('#ca8a04',this)" title="Gold"></button>
+        <button class="color-swatch" style="background:#475569" data-color="#475569" onclick="setAccent('#475569',this)" title="Slate"></button>
+      </div>
+      <p class="sec">Font Style</p>
+      <div class="font-row" id="fontRow">
+        <button class="font-btn active" data-font="DM Sans" onclick="setFont('DM Sans',this)" style="font-family:'DM Sans',sans-serif">Modern</button>
+        <button class="font-btn" data-font="Georgia" onclick="setFont('Georgia',this)" style="font-family:Georgia,serif">Classic</button>
+        <button class="font-btn" data-font="Arial" onclick="setFont('Arial',this)" style="font-family:Arial,sans-serif">Clean</button>
+        <button class="font-btn" data-font="Courier New" onclick="setFont('Courier New',this)" style="font-family:'Courier New',monospace">Mono</button>
+      </div>
+      <p class="sec">Invoice Language</p>
+      <select class="lang-sel" id="invoiceLang" onchange="render()">
+        <option value="en">&#127468;&#127463; English</option>
+        <option value="fr">&#127467;&#127479; Fran&#231;ais</option>
+        <option value="es">&#127466;&#127480; Espa&#241;ol</option>
+        <option value="de">&#127465;&#127466; Deutsch</option>
+        <option value="ar">&#127474;&#127462; &#1575;&#1604;&#1593;&#1585;&#1576;&#1610;&#1577;</option>
+        <option value="pt">&#127463;&#127479; Portugu&#234;s</option>
+        <option value="it">&#127470;&#127481; Italiano</option>
+        <option value="nl">&#127475;&#127473; Nederlands</option>
+      </select>
+      <p class="sec">Extra Fields</p>
+      <div class="toggle-row">
+        <label class="tog"><input type="checkbox" id="taxInclusive" onchange="render()"><span class="tog-track"></span></label>
+        <label for="taxInclusive">Tax inclusive (already in prices)</label>
+      </div>
+      <div class="toggle-row">
+        <label class="tog"><input type="checkbox" id="showShipping" onchange="toggleShipping()"><span class="tog-track"></span></label>
+        <label for="showShipping">Add shipping cost</label>
+      </div>
+      <div id="shippingRow" style="display:none">
+        <div class="field"><label>Shipping Cost</label><input type="number" id="shipping" value="0" min="0" step="0.01" oninput="render()" placeholder="0.00"></div>
+      </div>
+
       <button class="btn-pdf" id="dlBtn" onclick="dlPDF()">
         <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
         Download PDF &#8212; Free
@@ -314,6 +387,7 @@ function render(){
       '<td style="text-align:right">'+c+(pf(i.qty)*pf(i.price)).toFixed(2)+'</td></tr>';
   }).join('')||'<tr><td colspan="4" style="text-align:center;color:#94a3b8;padding:12px;font-size:11px">Add line items above</td></tr>';
   var logo=logoData?'<img src="'+logoData+'" style="max-height:36px;max-width:90px;display:block;margin-bottom:4px" alt="logo">':'';
+  document.getElementById('inv-preview').style.fontFamily=invoiceFont+',sans-serif';
   document.getElementById('inv-preview').innerHTML=
     '<div class="p-head">'+
       '<div class="p-title-row">'+
@@ -327,30 +401,100 @@ function render(){
     '</div>'+
     '<div class="p-body">'+
     '<div class="p-parties">'+
-      '<div class="p-party"><label>From</label><div class="nm">'+esc(biz)+'</div></div>'+
-      '<div class="p-party"><label>Bill To</label><div class="nm">'+esc(cli)+'</div>'+
+      '<div class="p-party"><label>'+getLang().from+'</label><div class="nm">'+esc(biz)+'</div></div>'+
+      '<div class="p-party"><label>'+getLang().billTo+'</label><div class="nm">'+esc(cli)+'</div>'+
         (cliAddr?'<div class="sub" style="white-space:pre-line">'+esc(cliAddr)+'</div>':'')+
         (cliEmail?'<div class="sub">'+esc(cliEmail)+'</div>':'')+
       '</div>'+
     '</div>'+
     '<div class="p-meta">'+
-      '<div><label>Invoice #</label><span>'+esc(gv('invNum')||'INV-001')+'</span></div>'+
-      '<div><label>Date</label><span>'+fd(gv('invDate'))+'</span></div>'+
-      '<div><label>Due Date</label><span>'+fd(gv('dueDate'))+'</span></div>'+
+      '<div><label>'+getLang().invNum+'</label><span>'+esc(gv('invNum')||'INV-001')+'</span></div>'+
+      '<div><label>'+getLang().date+'</label><span>'+fd(gv('invDate'))+'</span></div>'+
+      '<div><label>'+getLang().due+'</label><span>'+fd(gv('dueDate'))+'</span></div>'+
     '</div>'+
     '<table class="p-tbl"><thead><tr>'+
-      '<th style="width:44%">Description</th><th style="width:12%;text-align:center">Qty</th>'+
-      '<th style="width:22%;text-align:right">Rate</th><th style="text-align:right">Amount</th>'+
+      '<th style="width:44%">'+getLang().desc+'</th><th style="width:12%;text-align:center">Qty</th>'+
+      '<th style="width:22%;text-align:right">'+getLang().rate+'</th><th style="text-align:right">Amount</th>'+
     '</tr></thead><tbody>'+lines+'</tbody></table>'+
     '<div class="p-tots">'+
-      '<div class="p-tot-r"><span>Subtotal</span><span>'+c+r.sub.toFixed(2)+'</span></div>'+
-      (r.dp>0?'<div class="p-tot-r"><span>Discount ('+r.dp+'%)</span><span>-'+c+r.da.toFixed(2)+'</span></div>':'')+
-      (r.tp>0?'<div class="p-tot-r"><span>Tax ('+r.tp+'%)</span><span>'+c+r.ta.toFixed(2)+'</span></div>':'')+
-      '<div class="p-tot-r p-grand"><span>Total Due</span><span>'+c+r.tot.toFixed(2)+'</span></div>'+
+      '<div class="p-tot-r"><span>'+getLang().subtotal+'</span><span>'+c+r.sub.toFixed(2)+'</span></div>'+
+      (r.dp>0?'<div class="p-tot-r"><span>'+getLang().discount+' ('+r.dp+'%)</span><span>-'+c+r.da.toFixed(2)+'</span></div>':'')+
+      (r.tp>0?'<div class="p-tot-r"><span>'+getLang().tax+' ('+r.tp+'%)</span><span>'+(r.taxInc?'(incl.) ':'')+c+r.ta.toFixed(2)+'</span></div>':'')+
+      (r.ship>0?'<div class="p-tot-r"><span>'+getLang().shipping+'</span><span>'+c+r.ship.toFixed(2)+'</span></div>':'')+
+      '<div class="p-tot-r p-grand" style="color:'+accentColor+';"><span>'+getLang().total+'</span><span>'+c+r.tot.toFixed(2)+'</span></div>'+
     '</div>'+
-    (gv('notes')?'<div class="p-notes"><strong>Notes:</strong> '+esc(gv('notes'))+'</div>':'')+
+    (gv('notes')?'<div class="p-notes"><strong>'+getLang().notes+':</strong> '+esc(gv('notes'))+'</div>':'')+
     '</div>'+
     '<div class="p-foot">Thank you for your business &middot; '+esc(biz)+'</div>';
+}
+
+
+// ---- LANGUAGE ----
+var LANGS={
+  en:{invoice:'INVOICE',from:'From',billTo:'Bill To',invNum:'Invoice #',date:'Date',due:'Due Date',desc:'Description',qty:'Qty',rate:'Rate',amount:'Amount',subtotal:'Subtotal',discount:'Discount',tax:'Tax',total:'Total Due',notes:'Notes',thanks:'Thank you for your business!',shipping:'Shipping'},
+  fr:{invoice:'FACTURE',from:'De',billTo:'Facturer \u00e0',invNum:'Facture N\u00b0',date:'Date',due:"Date d'\u00e9ch\u00e9ance",desc:'Description',qty:'Qt\u00e9',rate:'Prix',amount:'Montant',subtotal:'Sous-total',discount:'Remise',tax:'TVA',total:'Total TTC',notes:'Notes',thanks:'Merci pour votre confiance !',shipping:'Livraison'},
+  es:{invoice:'FACTURA',from:'De',billTo:'Facturar a',invNum:'Factura N\u00b0',date:'Fecha',due:'Vencimiento',desc:'Descripci\u00f3n',qty:'Cant.',rate:'Precio',amount:'Importe',subtotal:'Subtotal',discount:'Descuento',tax:'IVA',total:'Total a pagar',notes:'Notas',thanks:'\u00a1Gracias por su confianza!',shipping:'Env\u00edo'},
+  de:{invoice:'RECHNUNG',from:'Von',billTo:'Rechnungsempf\u00e4nger',invNum:'Rechnungs-Nr.',date:'Datum',due:'F\u00e4lligkeitsdatum',desc:'Beschreibung',qty:'Menge',rate:'Einzelpreis',amount:'Betrag',subtotal:'Zwischensumme',discount:'Rabatt',tax:'MwSt.',total:'Gesamtbetrag',notes:'Hinweise',thanks:'Vielen Dank f\u00fcr Ihren Auftrag!',shipping:'Versand'},
+  ar:{invoice:'\u0641\u0627\u062a\u0648\u0631\u0629',from:'\u0645\u0646',billTo:'\u0625\u0644\u0649',invNum:'\u0631\u0642\u0645 \u0627\u0644\u0641\u0627\u062a\u0648\u0631\u0629',date:'\u0627\u0644\u062a\u0627\u0631\u064a\u062e',due:'\u062a\u0627\u0631\u064a\u062e \u0627\u0644\u0627\u0633\u062a\u062d\u0642\u0627\u0642',desc:'\u0627\u0644\u0648\u0635\u0641',qty:'\u0627\u0644\u0643\u0645\u064a\u0629',rate:'\u0627\u0644\u0633\u0639\u0631',amount:'\u0627\u0644\u0645\u0628\u0644\u063a',subtotal:'\u0627\u0644\u0645\u062c\u0645\u0648\u0639 \u0627\u0644\u0641\u0631\u0639\u064a',discount:'\u062e\u0635\u0645',tax:'\u0636\u0631\u064a\u0628\u0629',total:'\u0627\u0644\u0625\u062c\u0645\u0627\u0644\u064a \u0627\u0644\u0645\u0633\u062a\u062d\u0642',notes:'\u0645\u0644\u0627\u062d\u0638\u0627\u062a',thanks:'\u0634\u0643\u0631\u0627\u064b \u0644\u0643 \u0639\u0644\u0649 \u062b\u0642\u062a\u0643!',shipping:'\u0627\u0644\u0634\u062d\u0646'},
+  pt:{invoice:'FATURA',from:'De',billTo:'Faturar para',invNum:'Fatura N\u00b0',date:'Data',due:'Vencimento',desc:'Descri\u00e7\u00e3o',qty:'Qtd.',rate:'Pre\u00e7o',amount:'Valor',subtotal:'Subtotal',discount:'Desconto',tax:'Imposto',total:'Total a pagar',notes:'Notas',thanks:'Obrigado pela sua confian\u00e7a!',shipping:'Frete'},
+  it:{invoice:'FATTURA',from:'Da',billTo:'Intestata a',invNum:'Fattura N\u00b0',date:'Data',due:'Scadenza',desc:'Descrizione',qty:'Qt\u00e0',rate:'Prezzo',amount:'Importo',subtotal:'Subtotale',discount:'Sconto',tax:'IVA',total:'Totale da pagare',notes:'Note',thanks:'Grazie per la sua fiducia!',shipping:'Spedizione'},
+  nl:{invoice:'FACTUUR',from:'Van',billTo:'Factureren aan',invNum:'Factuur Nr.',date:'Datum',due:'Vervaldatum',desc:'Omschrijving',qty:'Aantal',rate:'Prijs',amount:'Bedrag',subtotal:'Subtotaal',discount:'Korting',tax:'BTW',total:'Totaal te betalen',notes:'Notities',thanks:'Bedankt voor uw vertrouwen!',shipping:'Verzending'}
+};
+function getLang(){var el=document.getElementById('invoiceLang');return el&&LANGS[el.value]?LANGS[el.value]:LANGS.en;}
+
+// ---- ACCENT COLOR ----
+var accentColor='#2563eb';
+function setAccent(hex,btn){
+  accentColor=hex;
+  document.querySelectorAll('.color-swatch').forEach(function(s){s.classList.remove('active');});
+  if(btn)btn.classList.add('active');
+  render();
+  try{localStorage.setItem('inv_accent',hex);}catch(e){}
+}
+function loadAccent(){
+  try{var s=localStorage.getItem('inv_accent');if(s){accentColor=s;var b=document.querySelector('.color-swatch[data-color="'+s+'"]');if(b){document.querySelectorAll('.color-swatch').forEach(function(x){x.classList.remove('active');});b.classList.add('active');}}}catch(e){}
+}
+
+// ---- FONT ----
+var invoiceFont='DM Sans';
+function setFont(font,btn){
+  invoiceFont=font;
+  document.querySelectorAll('.font-btn').forEach(function(b){b.classList.remove('active');});
+  if(btn)btn.classList.add('active');
+  render();
+  try{localStorage.setItem('inv_font',font);}catch(e){}
+}
+function loadFont(){
+  try{var f=localStorage.getItem('inv_font');if(f){invoiceFont=f;var b=document.querySelector('.font-btn[data-font="'+f+'"]');if(b){document.querySelectorAll('.font-btn').forEach(function(x){x.classList.remove('active');});b.classList.add('active');}}}catch(e){}
+}
+
+// ---- SHIPPING ----
+function toggleShipping(){
+  document.getElementById('shippingRow').style.display=document.getElementById('showShipping').checked?'block':'none';
+  render();
+}
+function getShipping(){
+  var el=document.getElementById('showShipping');
+  if(!el||!el.checked)return 0;
+  return pf(document.getElementById('shipping').value);
+}
+function getTaxInclusive(){var el=document.getElementById('taxInclusive');return el&&el.checked;}
+
+// ---- DRAG TO REORDER ----
+var dragId=null;
+function onDragStart(e){dragId=parseInt(e.currentTarget.dataset.id);e.currentTarget.classList.add('dragging');}
+function onDragOver(e){e.preventDefault();e.currentTarget.classList.add('drag-over');}
+function onDragEnd(){document.querySelectorAll('#itemsBody tr').forEach(function(r){r.classList.remove('dragging','drag-over');});}
+function onDragDrop(e){
+  e.preventDefault();
+  var tid=parseInt(e.currentTarget.dataset.id);
+  if(dragId===tid)return;
+  var fi=items.findIndex(function(i){return i.id===dragId;});
+  var ti=items.findIndex(function(i){return i.id===tid;});
+  if(fi<0||ti<0)return;
+  var moved=items.splice(fi,1)[0];
+  items.splice(ti,0,moved);
+  renderItems();render();
 }
 
 var items=[], logoData=null;
@@ -391,7 +535,8 @@ function addItem(){items.push({id:Date.now()+Math.random(),desc:'',qty:1,price:0
 function removeItem(id){items=items.filter(function(i){return i.id!==id;});renderItems();render();}
 function renderItems(){
   document.getElementById('itemsBody').innerHTML=items.map(function(it){
-    return '<tr>'+
+    return '<tr draggable="true" data-id="'+it.id+'" ondragstart="onDragStart(event)" ondragover="onDragOver(event)" ondrop="onDragDrop(event)" ondragend="onDragEnd()">'+
+      '<td class="col-drag" title="Drag to reorder">&#8942;</td>'+
       '<td class="col-d"><input type="text" value="'+esc(it.desc)+'" placeholder="Service or item" oninput="upd('+it.id+',\'desc\',this.value)"></td>'+
       '<td class="col-q"><input type="number" value="'+it.qty+'" min="0" step="any" style="text-align:center" oninput="upd('+it.id+',\'qty\',this.value)"></td>'+
       '<td class="col-p"><input type="number" value="'+it.price+'" min="0" step="any" oninput="upd('+it.id+',\'price\',this.value)"></td>'+
@@ -408,8 +553,10 @@ function upd(id,f,v){
 function calcs(){
   var sub=items.reduce(function(s,i){return s+pf(i.qty)*pf(i.price);},0);
   var dp=pf(document.getElementById('discount').value),tp=pf(document.getElementById('taxRate').value);
-  var da=sub*dp/100,taxed=sub-da,ta=taxed*tp/100;
-  return{sub:sub,da:da,ta:ta,tot:taxed+ta,dp:dp,tp:tp};
+  var taxInc=getTaxInclusive(),ship=getShipping();
+  var da=sub*dp/100,taxed=sub-da,ta=taxInc?taxed-(taxed/(1+tp/100)):taxed*tp/100;
+  var tot=taxInc?taxed+ship:taxed+ta+ship;
+  return{sub:sub,da:da,ta:ta,tot:tot,dp:dp,tp:tp,ship:ship,taxInc:taxInc};
 }
 function updateTotals(){
   var c=cur(),r=calcs();

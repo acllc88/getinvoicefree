@@ -1313,11 +1313,11 @@ function loadFromUrl(){
     if(data.tax)g('taxRate').value=data.tax;
     if(data.disc)g('discount').value=data.disc;
     if(data.notes)g('notes').value=data.notes;
-    if(data.items&&data.items.length){items=data.items.map((it,i)=>({id:Date.now()+i,desc:it.d,qty:it.q,price:it.p}));renderItems();}
+    if(data.items&&data.items.length){items=data.items.map((it,i)=>({id:Date.now()+i,desc:it.d||it.desc||'',qty:pf(it.q||it.qty||1),price:pf(it.p||it.price||0)}));renderItems();}
     if(data.color)setColor(data.color,document.querySelector('.color-swatch[data-color="'+data.color+'"]'));
     if(data.font)setFont(data.font,document.querySelector('.font-btn[data-font="'+data.font+'"]'));
     render();
-    toast('Invoice loaded from shared link ✓');
+    toast('AI invoice loaded ✓ Review and download');
     window.history.replaceState({},'',window.location.pathname);
   }catch(e){console.error('loadFromUrl:',e);}
 }
