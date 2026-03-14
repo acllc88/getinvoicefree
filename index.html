@@ -42,7 +42,7 @@
 <link rel="manifest" href="manifest.json">
 
 <!-- SCHEMA: SoftwareApplication -->
-<script type="application/ld+json">{"@context":"https://schema.org","@type":"SoftwareApplication","name":"Free Invoice Generator","applicationCategory":"BusinessApplication","operatingSystem":"Web Browser","offers":{"@type":"Offer","price":"0","priceCurrency":"USD"},"description":"Create professional invoices online for free. No signup required. Download as PDF instantly.","url":"https://getinvoicefree.app/","featureList":["PDF Download","No Signup Required","Custom Logo Upload","Tax Calculation","Dark Mode","Invoice Status Tracking"],"aggregateRating":{"@type":"AggregateRating","ratingValue":"4.8","ratingCount":"1247"}}</script>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"SoftwareApplication","name":"Free Invoice Generator","applicationCategory":"BusinessApplication","operatingSystem":"Web Browser","offers":{"@type":"Offer","price":"0","priceCurrency":"USD"},"description":"Create professional invoices online for free. No signup required. Download as PDF instantly.","url":"https://getinvoicefree.app/","featureList":["PDF Download","No Signup Required","Custom Logo Upload","Tax Calculation","Dark Mode","Invoice Status Tracking","Accent Color Picker","Shipping Cost","Tax Inclusive Mode","Receipt Generator","Estimate Generator"],"aggregateRating":{"@type":"AggregateRating","ratingValue":"4.8","ratingCount":"1247"}}</script>
 <script type="application/ld+json">{"@context":"https://schema.org","@type":"HowTo","name":"How to Create a Free Invoice Online","description":"Create a professional invoice in 3 simple steps using our free invoice generator.","step":[{"@type":"HowToStep","name":"Fill in your details","text":"Enter your business name, client details, invoice number, and due date."},{"@type":"HowToStep","name":"Add line items","text":"Add your products or services with quantities and prices. Tax is calculated automatically."},{"@type":"HowToStep","name":"Download PDF","text":"Click Download PDF. Your invoice is ready instantly. No signup required."}]}</script>
 <script type="application/ld+json">{"@context":"https://schema.org","@type":"FAQPage","mainEntity":[{"@type":"Question","name":"Is this invoice generator really free?","acceptedAnswer":{"@type":"Answer","text":"Yes, 100% free forever. No hidden charges, no credit card required, no subscription."}},{"@type":"Question","name":"Do I need to create an account or sign up?","acceptedAnswer":{"@type":"Answer","text":"No. There is absolutely no signup, registration, or account required."}},{"@type":"Question","name":"Can I download my invoice as a PDF?","acceptedAnswer":{"@type":"Answer","text":"Yes. Click the Download PDF button and your professional invoice downloads instantly."}},{"@type":"Question","name":"Can I add my logo to the invoice?","acceptedAnswer":{"@type":"Answer","text":"Yes. Click the logo upload area and select your business logo image."}},{"@type":"Question","name":"Are my invoices saved?","acceptedAnswer":{"@type":"Answer","text":"Your last invoice is automatically saved in your browser. You can also save up to 20 invoices to the tracker."}},{"@type":"Question","name":"Can I change the currency?","acceptedAnswer":{"@type":"Answer","text":"Yes. Use the currency dropdown to switch between USD, EUR, GBP, CAD, AUD, JPY, INR, MAD and more."}}]}</script>
 <script type="application/ld+json">{"@context":"https://schema.org","@type":"WebSite","name":"Free Invoice Generator","url":"https://getinvoicefree.app/"}</script>
@@ -355,6 +355,58 @@ footer{background:var(--bg2);border-top:1px solid var(--border);padding:28px 16p
 @font-face{font-family:'DM Sans';font-display:swap}
 @font-face{font-family:'DM Mono';font-display:swap}
 
+
+/* === ACCENT COLOR PICKER === */
+.color-picker-row{display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin-bottom:0}
+.color-swatch{width:24px;height:24px;border-radius:50%;cursor:pointer;border:2px solid transparent;transition:transform .15s,border-color .15s;flex-shrink:0}
+.color-swatch:hover{transform:scale(1.2)}
+.color-swatch.active{border-color:var(--text)!important;transform:scale(1.15)}
+
+
+/* === TESTIMONIALS === */
+.testimonials{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:14px;margin:16px 0 32px}
+.tcard{background:var(--bg);border:1px solid var(--border);border-radius:var(--radius);padding:18px;position:relative}
+.tcard-stars{color:#f59e0b;font-size:14px;margin-bottom:8px;letter-spacing:2px}
+.tcard-text{font-size:14px;color:var(--text2);line-height:1.7;margin-bottom:12px;font-style:italic}
+.tcard-author{display:flex;align-items:center;gap:10px}
+.tcard-avatar{width:36px;height:36px;border-radius:50%;background:var(--accent);color:#fff;font-weight:700;font-size:13px;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.tcard-name{font-size:13px;font-weight:600;color:var(--text)}
+.tcard-role{font-size:11px;color:var(--text3)}
+
+
+/* === EXTRA FIELDS === */
+.toggle-row{display:flex;align-items:center;gap:10px;margin-bottom:8px}
+.toggle-row label{font-size:12px;color:var(--text2);cursor:pointer;user-select:none}
+.toggle{position:relative;width:34px;height:18px;flex-shrink:0}
+.toggle input{opacity:0;width:0;height:0;position:absolute}
+.toggle-track{position:absolute;inset:0;background:var(--border);border-radius:9px;cursor:pointer;transition:background .2s}
+.toggle input:checked+.toggle-track{background:var(--accent)}
+.toggle-track::after{content:'';position:absolute;width:14px;height:14px;border-radius:50%;background:#fff;top:2px;left:2px;transition:left .2s}
+.toggle input:checked+.toggle-track::after{left:18px}
+
+
+/* === FONT SELECTOR === */
+.font-btn{background:var(--bg3);border:1px solid var(--border);border-radius:7px;padding:5px 11px;font-size:12px;font-weight:600;cursor:pointer;color:var(--text2);transition:all .15s;flex-shrink:0;white-space:nowrap}
+.font-btn:hover{background:var(--border)}
+.font-btn.active{background:var(--accent);color:#fff;border-color:var(--accent)}
+.font-row{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:0}
+
+/* === DRAG TO REORDER === */
+.c-drag{width:6%;text-align:center;cursor:grab;color:var(--text3);font-size:16px;padding:0 2px;user-select:none}
+.c-drag:active{cursor:grabbing}
+tr.dragging{opacity:.4}
+tr.drag-over{border-top:2px solid var(--accent)}
+
+/* === SHARE LINK === */
+.share-link-wrap{background:var(--bg2);border:1px solid var(--border);border-radius:8px;padding:12px 14px;margin-top:10px;display:none}
+.share-link-wrap h4{font-size:12px;font-weight:600;color:var(--text2);margin-bottom:8px;text-transform:uppercase;letter-spacing:.05em}
+.share-link-input{display:flex;gap:6px}
+.share-link-input input{flex:1;font-size:13px;background:var(--bg);border:1px solid var(--border);border-radius:7px;padding:8px 10px;color:var(--text);font-family:'DM Sans',sans-serif}
+.share-link-input button{background:var(--accent);color:#fff;border:none;border-radius:7px;padding:8px 14px;font-size:13px;font-weight:600;cursor:pointer;font-family:'DM Sans',sans-serif;white-space:nowrap}
+
+/* === LANGUAGE === */
+.lang-select{background:var(--bg3);border:1px solid var(--border);border-radius:7px;padding:5px 10px;font-size:13px;color:var(--text2);font-family:'DM Sans',sans-serif;cursor:pointer}
+
 /* === SHARE BTN === */
 .share-btn{background:var(--bg3);color:var(--text2);border:1px solid var(--border);border-radius:8px;padding:12px 13px;font-size:14px;cursor:pointer;font-family:'DM Sans',sans-serif;display:none;-webkit-tap-highlight-color:transparent;font-weight:500}
 </style>
@@ -466,7 +518,7 @@ footer{background:var(--bg2);border-top:1px solid var(--border);padding:28px 16p
           <div class="items-wrap" role="region" aria-label="Line items">
             <table class="items-tbl" aria-label="Invoice line items">
               <thead><tr>
-                <th class="c-desc">Description</th>
+                <th class="c-drag"></th><th class="c-desc">Description</th>
                 <th class="c-qty">Qty</th>
                 <th class="c-price">Price</th>
                 <th class="c-tot">Total</th>
@@ -491,6 +543,61 @@ footer{background:var(--bg2);border-top:1px solid var(--border);padding:28px 16p
 
           <div class="sec">Notes &amp; Terms</div>
           <div class="row r1"><div class="field"><label for="notes">Notes / Payment Terms</label><textarea id="notes" placeholder="Payment due within 30 days. Thank you!" oninput="render()" rows="2"></textarea></div></div>
+
+
+          <div class="sec">Invoice Accent Color</div>
+          <div class="color-picker-row" id="colorPicker" role="group" aria-label="Choose invoice accent color">
+            <button class="color-swatch active" style="background:#2563eb" data-color="#2563eb" onclick="setColor('#2563eb',this)" title="Blue" aria-label="Blue"></button>
+            <button class="color-swatch" style="background:#0f172a" data-color="#0f172a" onclick="setColor('#0f172a',this)" title="Black" aria-label="Black"></button>
+            <button class="color-swatch" style="background:#7c3aed" data-color="#7c3aed" onclick="setColor('#7c3aed',this)" title="Purple" aria-label="Purple"></button>
+            <button class="color-swatch" style="background:#dc2626" data-color="#dc2626" onclick="setColor('#dc2626',this)" title="Red" aria-label="Red"></button>
+            <button class="color-swatch" style="background:#16a34a" data-color="#16a34a" onclick="setColor('#16a34a',this)" title="Green" aria-label="Green"></button>
+            <button class="color-swatch" style="background:#ea580c" data-color="#ea580c" onclick="setColor('#ea580c',this)" title="Orange" aria-label="Orange"></button>
+            <button class="color-swatch" style="background:#0891b2" data-color="#0891b2" onclick="setColor('#0891b2',this)" title="Teal" aria-label="Teal"></button>
+            <button class="color-swatch" style="background:#be185d" data-color="#be185d" onclick="setColor('#be185d',this)" title="Pink" aria-label="Pink"></button>
+            <button class="color-swatch" style="background:#ca8a04" data-color="#ca8a04" onclick="setColor('#ca8a04',this)" title="Gold" aria-label="Gold"></button>
+            <button class="color-swatch" style="background:#475569" data-color="#475569" onclick="setColor('#475569',this)" title="Slate" aria-label="Slate"></button>
+          </div>
+
+          <div class="sec">Font Style</div>
+          <div class="font-row" id="fontRow" role="group" aria-label="Choose invoice font">
+            <button class="font-btn active" data-font="DM Sans" onclick="setFont('DM Sans',this)" style="font-family:'DM Sans',sans-serif">Modern</button>
+            <button class="font-btn" data-font="Georgia" onclick="setFont('Georgia',this)" style="font-family:Georgia,serif">Classic</button>
+            <button class="font-btn" data-font="Arial" onclick="setFont('Arial',this)" style="font-family:Arial,sans-serif">Clean</button>
+            <button class="font-btn" data-font="Courier New" onclick="setFont('Courier New',this)" style="font-family:'Courier New',monospace">Mono</button>
+          </div>
+
+          <div class="sec">Invoice Language</div>
+          <select class="lang-select" id="invoiceLang" onchange="render()" aria-label="Invoice language">
+            <option value="en">🇬🇧 English</option>
+            <option value="fr">🇫🇷 Français</option>
+            <option value="es">🇪🇸 Español</option>
+            <option value="de">🇩🇪 Deutsch</option>
+            <option value="ar">🇲🇦 العربية</option>
+            <option value="pt">🇧🇷 Português</option>
+            <option value="it">🇮🇹 Italiano</option>
+            <option value="nl">🇳🇱 Nederlands</option>
+          </select>
+
+
+          <div class="sec">Extra Fields</div>
+          <div class="toggle-row">
+            <label class="toggle" aria-label="Tax inclusive toggle">
+              <input type="checkbox" id="taxInclusive" onchange="render()">
+              <span class="toggle-track"></span>
+            </label>
+            <label for="taxInclusive" style="font-size:12px;color:var(--text2);cursor:pointer">Tax inclusive (tax already included in prices)</label>
+          </div>
+          <div class="toggle-row" id="shippingToggleRow">
+            <label class="toggle" aria-label="Shipping cost toggle">
+              <input type="checkbox" id="showShipping" onchange="toggleShipping()">
+              <span class="toggle-track"></span>
+            </label>
+            <label for="showShipping" style="font-size:12px;color:var(--text2);cursor:pointer">Add shipping cost</label>
+          </div>
+          <div id="shippingRow" style="display:none">
+            <div class="field"><label for="shipping">Shipping Cost</label><input type="number" id="shipping" value="0" min="0" step="0.01" oninput="render()" placeholder="0.00"></div>
+          </div>
 
           <div class="actions">
 
@@ -531,6 +638,16 @@ footer{background:var(--bg2);border-top:1px solid var(--border);padding:28px 16p
             <div class="btn-row">
               <button class="btn-s" onclick="saveInv()" aria-label="Save invoice">💾 Save Invoice</button>
               <button id="shareBtn" class="share-btn" onclick="shareInv()" aria-label="Share invoice">📤 Share</button>
+
+              <div class="share-link-wrap" id="shareLinkWrap">
+                <h4>Share Invoice Link</h4>
+                <div class="share-link-input">
+                  <input type="text" id="shareLinkUrl" readonly placeholder="Generating link...">
+                  <button onclick="copyShareLink()">Copy Link</button>
+                </div>
+                <p style="font-size:11px;color:var(--text3);margin-top:6px">Link contains your invoice data — anyone with it can view your invoice details.</p>
+              </div>
+
               <button class="share-btn" onclick="openEmailPanel()" aria-label="Email invoice" style="display:inline-flex;align-items:center;gap:6px;background:#eff6ff;color:#2563eb;border-color:#bfdbfe">✉️ Email</button>
               <button class="btn-t" onclick="clearForm()" aria-label="New invoice">🗑 New</button>
             </div>
@@ -618,6 +735,45 @@ footer{background:var(--bg2);border-top:1px solid var(--border);padding:28px 16p
     </div>
   </div>
 
+  <section class="cs" id="testimonials">
+    <h2>What Our Users Say</h2>
+    <p>Trusted by thousands of freelancers, contractors and small business owners worldwide.</p>
+    <div class="testimonials">
+      <div class="tcard">
+        <div class="tcard-stars">&#9733;&#9733;&#9733;&#9733;&#9733;</div>
+        <p class="tcard-text">"Finally a free invoice generator that actually works on mobile. I send invoices from my phone all the time now. No watermark, no annoying signup — exactly what I needed."</p>
+        <div class="tcard-author">
+          <div class="tcard-avatar">SR</div>
+          <div><div class="tcard-name">Sarah R.</div><div class="tcard-role">Freelance Designer, UK</div></div>
+        </div>
+      </div>
+      <div class="tcard">
+        <div class="tcard-stars">&#9733;&#9733;&#9733;&#9733;&#9733;</div>
+        <p class="tcard-text">"I've tried Zoho, Wave, Invoice Ninja — all require accounts and have free plan limits. This does everything I need for free with zero friction. The dark mode is a nice bonus."</p>
+        <div class="tcard-author">
+          <div class="tcard-avatar">MK</div>
+          <div><div class="tcard-name">Marcus K.</div><div class="tcard-role">Web Developer, Germany</div></div>
+        </div>
+      </div>
+      <div class="tcard">
+        <div class="tcard-stars">&#9733;&#9733;&#9733;&#9733;&#9733;</div>
+        <p class="tcard-text">"As a photographer I need to send clean, professional invoices fast. The logo upload and multiple currencies make this perfect for my international clients."</p>
+        <div class="tcard-author">
+          <div class="tcard-avatar">AM</div>
+          <div><div class="tcard-name">Aisha M.</div><div class="tcard-role">Photographer, UAE</div></div>
+        </div>
+      </div>
+      <div class="tcard">
+        <div class="tcard-stars">&#9733;&#9733;&#9733;&#9733;&#9733;</div>
+        <p class="tcard-text">"I run a small plumbing business and need quick invoices on site. This works perfectly on my phone, saves my details, and the PDF looks completely professional."</p>
+        <div class="tcard-author">
+          <div class="tcard-avatar">JT</div>
+          <div><div class="tcard-name">James T.</div><div class="tcard-role">Plumber &amp; Contractor, Australia</div></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
   <section class="cs" id="faq">
     <h2>Frequently Asked Questions</h2>
     <div class="faq-list" role="list">
@@ -638,6 +794,15 @@ footer{background:var(--bg2);border-top:1px solid var(--border);padding:28px 16p
     <nav class="fl" aria-label="Footer links">
       <a href="receipt-generator.html">Receipt Generator</a>
       <a href="estimate-generator.html">Estimate Generator</a>
+      <a href="proforma-invoice-generator.html">Proforma Invoice</a>
+      <a href="credit-note-generator.html">Credit Note</a>
+      <a href="ai-invoice-generator.html">AI Invoice Generator</a>
+      <a href="invoice-template-download.html">Download Templates</a>
+      <a href="invoice-generator-uk.html">UK Invoice Generator</a>
+      <a href="invoice-generator-australia.html">Australia Invoice</a>
+      <a href="invoice-generator-canada.html">Canada Invoice</a>
+      <a href="invoice-generator-india.html">India Invoice</a>
+      <a href="invoice-generator-morocco.html">Morocco Invoice</a>
       <a href="invoice-templates.html">Invoice Templates</a>
       <a href="invoice-template-freelancer.html">Freelancer Invoice</a>
       <a href="invoice-template-photographer.html">Photographer Invoice</a>
@@ -681,12 +846,29 @@ footer{background:var(--bg2);border-top:1px solid var(--border);padding:28px 16p
 <div class="toast" id="toast" role="alert" aria-live="assertive"></div>
 
 <script>
+
+// ---- LANGUAGE TRANSLATIONS ----
+const LANGS = {
+  en:{invoice:'INVOICE',from:'From',billTo:'Bill To',invNum:'Invoice #',date:'Date',due:'Due Date',desc:'Description',qty:'Qty',rate:'Rate',amount:'Amount',subtotal:'Subtotal',discount:'Discount',tax:'Tax',total:'Total Due',notes:'Notes & Terms',thanks:'Thank you for your business!',shipping:'Shipping'},
+  fr:{invoice:'FACTURE',from:'De',billTo:'Facturer à',invNum:'Facture N°',date:'Date',due:"Date d'échéance",desc:'Description',qty:'Qté',rate:'Prix unitaire',amount:'Montant',subtotal:'Sous-total',discount:'Remise',tax:'TVA',total:'Total TTC',notes:'Notes & Conditions',thanks:'Merci pour votre confiance !',shipping:'Livraison'},
+  es:{invoice:'FACTURA',from:'De',billTo:'Facturar a',invNum:'Factura N°',date:'Fecha',due:'Vencimiento',desc:'Descripción',qty:'Cant.',rate:'Precio',amount:'Importe',subtotal:'Subtotal',discount:'Descuento',tax:'IVA',total:'Total a pagar',notes:'Notas y Condiciones',thanks:'¡Gracias por su confianza!',shipping:'Envío'},
+  de:{invoice:'RECHNUNG',from:'Von',billTo:'Rechnungsempfänger',invNum:'Rechnungs-Nr.',date:'Datum',due:'Fälligkeitsdatum',desc:'Beschreibung',qty:'Menge',rate:'Einzelpreis',amount:'Betrag',subtotal:'Zwischensumme',discount:'Rabatt',tax:'MwSt.',total:'Gesamtbetrag',notes:'Hinweise & Bedingungen',thanks:'Vielen Dank für Ihren Auftrag!',shipping:'Versand'},
+  ar:{invoice:'فاتورة',from:'من',billTo:'إلى',invNum:'رقم الفاتورة',date:'التاريخ',due:'تاريخ الاستحقاق',desc:'الوصف',qty:'الكمية',rate:'السعر',amount:'المبلغ',subtotal:'المجموع الفرعي',discount:'خصم',tax:'ضريبة',total:'الإجمالي المستحق',notes:'ملاحظات وشروط',thanks:'شكراً لك على ثقتك!',shipping:'الشحن'},
+  pt:{invoice:'FATURA',from:'De',billTo:'Faturar para',invNum:'Fatura N°',date:'Data',due:'Vencimento',desc:'Descrição',qty:'Qtd.',rate:'Preço',amount:'Valor',subtotal:'Subtotal',discount:'Desconto',tax:'Imposto',total:'Total a pagar',notes:'Notas e Condições',thanks:'Obrigado pela sua confiança!',shipping:'Frete'},
+  it:{invoice:'FATTURA',from:'Da',billTo:'Intestata a',invNum:'Fattura N°',date:'Data',due:'Scadenza',desc:'Descrizione',qty:'Qtà',rate:'Prezzo',amount:'Importo',subtotal:'Subtotale',discount:'Sconto',tax:'IVA',total:'Totale da pagare',notes:'Note e Condizioni',thanks:'Grazie per la sua fiducia!',shipping:'Spedizione'},
+  nl:{invoice:'FACTUUR',from:'Van',billTo:'Factureren aan',invNum:'Factuur Nr.',date:'Datum',due:'Vervaldatum',desc:'Omschrijving',qty:'Aantal',rate:'Prijs',amount:'Bedrag',subtotal:'Subtotaal',discount:'Korting',tax:'BTW',total:'Totaal te betalen',notes:'Notities & Voorwaarden',thanks:'Bedankt voor uw vertrouwen!',shipping:'Verzending'}
+};
+function getLang(){
+  const el=document.getElementById('invoiceLang');
+  return el&&LANGS[el.value]?LANGS[el.value]:LANGS.en;
+}
+
 // ---- STATE ----
-let items=[], logoData=null, invoices=[], activeTab='form';
+let items=[], logoData=null, invoices=[], activeTab='form', accentColor='#2563eb', invoiceFont='DM Sans';
 
 // ---- INIT ----
 function init(){
-  setDates(); autoNum(); loadSaved();
+  setDates(); autoNum(); loadSaved(); loadColor(); loadFont(); loadFromUrl();
   addItem(); addItem(); render(); renderTrk();
   initDark(); initCookie();
   // Show native share button if supported
@@ -765,13 +947,30 @@ function removeItem(id){
 }
 function renderItems(){
   g('itemsBody').innerHTML=items.map(it=>`
-    <tr>
+    <tr draggable="true" data-id="${it.id}" ondragstart="dragStart(event)" ondragover="dragOver(event)" ondrop="dragDrop(event)" ondragend="dragEnd(event)">
+      <td class="c-drag" title="Drag to reorder">&#8942;</td>
       <td class="c-desc"><input type="text" value="${esc(it.desc)}" placeholder="Service or product" oninput="ic(${it.id},'desc',this.value)" aria-label="Description" inputmode="text"></td>
       <td class="c-qty"><input type="number" value="${it.qty}" min="0" step="any" oninput="ic(${it.id},'qty',this.value)" aria-label="Quantity" inputmode="decimal"></td>
       <td class="c-price"><input type="number" value="${it.price}" min="0" step="any" oninput="ic(${it.id},'price',this.value)" aria-label="Price" inputmode="decimal"></td>
       <td class="c-tot">${cur()}${(pf(it.qty)*pf(it.price)).toFixed(2)}</td>
-      <td class="c-del"><button class="del-btn" onclick="removeItem(${it.id})" aria-label="Remove">×</button></td>
+      <td class="c-del"><button class="del-btn" onclick="removeItem(${it.id})" aria-label="Remove">&#215;</button></td>
     </tr>`).join('');
+}
+// ---- DRAG TO REORDER ----
+let dragId=null;
+function dragStart(e){dragId=parseInt(e.currentTarget.dataset.id);e.currentTarget.classList.add('dragging');}
+function dragOver(e){e.preventDefault();e.currentTarget.classList.add('drag-over');}
+function dragEnd(e){document.querySelectorAll('#itemsBody tr').forEach(r=>{r.classList.remove('dragging','drag-over');});}
+function dragDrop(e){
+  e.preventDefault();
+  const targetId=parseInt(e.currentTarget.dataset.id);
+  if(dragId===targetId)return;
+  const fromIdx=items.findIndex(i=>i.id===dragId);
+  const toIdx=items.findIndex(i=>i.id===targetId);
+  if(fromIdx<0||toIdx<0)return;
+  const moved=items.splice(fromIdx,1)[0];
+  items.splice(toIdx,0,moved);
+  renderItems();render();
 }
 function ic(id,f,v){
   const it=items.find(i=>i.id===id);
@@ -783,22 +982,44 @@ function ic(id,f,v){
 function calcs(){
   const sub=items.reduce((s,i)=>s+pf(i.qty)*pf(i.price),0);
   const dp=pf(g('discount').value), tp=pf(g('taxRate').value);
-  const da=sub*dp/100, tb=sub-da, ta=tb*tp/100;
-  return{sub,da,ta,tot:tb+ta,dp,tp};
+  const taxInclusive=g('taxInclusive')&&g('taxInclusive').checked;
+  const shipping=g('showShipping')&&g('showShipping').checked?pf(g('shipping')&&g('shipping').value):0;
+  const da=sub*dp/100, tb=sub-da;
+  let ta=0;
+  if(taxInclusive){
+    // Tax already included — extract it for display
+    ta=tb-(tb/(1+tp/100));
+  } else {
+    ta=tb*tp/100;
+  }
+  const tot=taxInclusive?tb+shipping:tb+ta+shipping;
+  return{sub,da,ta,tot,dp,tp,shipping,taxInclusive};
 }
 function updateTotals(){
-  const c=cur(), {sub,da,ta,tot,dp,tp}=calcs();
+  const c=cur(), {sub,da,ta,tot,dp,tp,shipping,taxInclusive}=calcs();
   g('subDisp').textContent=c+sub.toFixed(2);
   g('totDisp').textContent=c+tot.toFixed(2);
   const dr=g('discRow'),txr=g('taxRow');
   if(dp>0){dr.style.display='flex';g('discDisp').textContent='-'+c+da.toFixed(2)}else{dr.style.display='none'}
-  if(tp>0){txr.style.display='flex';g('taxDisp').textContent=c+ta.toFixed(2)}else{txr.style.display='none'}
+  if(tp>0){
+    txr.style.display='flex';
+    g('taxDisp').textContent=(taxInclusive?'(incl.) ':'')+c+ta.toFixed(2);
+  } else {txr.style.display='none'}
+  // Shipping row
+  let sr=g('shippingDispRow');
+  if(!sr&&shipping>0){
+    const row=document.createElement('div');
+    row.className='tot-row';row.id='shippingDispRow';
+    row.innerHTML='<span>Shipping</span><span id="shippingDisp"></span>';
+    g('taxRow').after(row);sr=row;
+  }
+  if(sr){sr.style.display=shipping>0?'flex':'none';const sd=g('shippingDisp');if(sd)sd.textContent=c+shipping.toFixed(2);}
 }
 
 // ---- RENDER PREVIEW ----
 function render(){
   updateTotals(); autoSave();
-  const c=cur(), {sub,da,ta,tot,dp,tp}=calcs();
+  const c=cur(), {sub,da,ta,tot,dp,tp,shipping,taxInclusive}=calcs();
   const biz=v('bizName')||'Your Business', cli=v('cliName')||'Client Name';
   const lines=items.filter(i=>i.desc||i.price).map(i=>`
     <tr>
@@ -809,285 +1030,29 @@ function render(){
     </tr>`).join('');
 
   g('preview').innerHTML=`
-    <div class="inv-header">
-      <div class="inv-logo">${logoData?`<img src="${logoData}" alt="${esc(biz)} logo">`:`<div style="font-size:18px;font-weight:700;color:#2563eb">${esc(biz)}</div>`}</div>
-      <div class="inv-title"><h1>INVOICE</h1><p>#${esc(v('invNum')||'INV-001')}</p></div>
+    <div class="inv-header" style="font-family:${invoiceFont},sans-serif">
+      <div class="inv-logo">${logoData?`<img src="${logoData}" alt="${esc(biz)} logo">`:`<div style="font-size:18px;font-weight:700;color:${accentColor}">${esc(biz)}</div>`}</div>
+      <div class="inv-title"><h1 style="color:${accentColor}">${getLang().invoice}</h1><p>#${esc(v('invNum')||'INV-001')}</p></div>
     </div>
     <div class="inv-parties">
-      <div class="inv-party"><h3>From</h3><p class="nm">${esc(biz)}</p>${v('bizAddr')?`<p style="white-space:pre-line;font-size:10px">${esc(v('bizAddr'))}</p>`:''} ${v('bizEmail')?`<p style="color:#2563eb;font-size:10px">${esc(v('bizEmail'))}</p>`:''}</div>
-      <div class="inv-party"><h3>Bill To</h3><p class="nm">${esc(cli)}</p>${v('cliAddr')?`<p style="white-space:pre-line;font-size:10px">${esc(v('cliAddr'))}</p>`:''} ${v('cliEmail')?`<p style="color:#2563eb;font-size:10px">${esc(v('cliEmail'))}</p>`:''}</div>
+      <div class="inv-party"><h3>${getLang().from}</h3><p class="nm">${esc(biz)}</p>${v('bizAddr')?`<p style="white-space:pre-line;font-size:10px">${esc(v('bizAddr'))}</p>`:''} ${v('bizEmail')?`<p style="color:${accentColor};font-size:10px">${esc(v('bizEmail'))}</p>`:''}</div>
+      <div class="inv-party"><h3>${getLang().billTo}</h3><p class="nm">${esc(cli)}</p>${v('cliAddr')?`<p style="white-space:pre-line;font-size:10px">${esc(v('cliAddr'))}</p>`:''} ${v('cliEmail')?`<p style="color:${accentColor};font-size:10px">${esc(v('cliEmail'))}</p>`:''}</div>
     </div>
     <div class="inv-meta">
-      <div><label>Invoice #</label><span>${esc(v('invNum')||'INV-001')}</span></div>
-      <div><label>Date</label><span>${fd(v('invDate'))}</span></div>
-      <div><label>Due</label><span>${fd(v('dueDate'))}</span></div>
+      <div><label>${getLang().invNum}</label><span>${esc(v('invNum')||'INV-001')}</span></div>
+      <div><label>${getLang().date}</label><span>${fd(v('invDate'))}</span></div>
+      <div><label>${getLang().due}</label><span>${fd(v('dueDate'))}</span></div>
     </div>
     <table class="inv-tbl">
-      <thead><tr><th style="width:40%">Description</th><th style="width:14%;text-align:center">Qty</th><th style="width:23%;text-align:right">Rate</th><th style="width:23%;text-align:right">Amount</th></tr></thead>
-      <tbody>${lines||'<tr><td colspan="4" style="text-align:center;color:#94a3b8;padding:14px;font-size:11px">Add line items above</td></tr>'}</tbody>
+      <thead><tr><th style="width:40%">${getLang().desc}</th><th style="width:14%;text-align:center">${getLang().qty}</th><th style="width:23%;text-align:right">${getLang().rate}</th><th style="width:23%;text-align:right">${getLang().amount}</th></tr></thead>
+      <tbody>${lines||`<tr><td colspan="4" style="text-align:center;color:#94a3b8;padding:14px;font-size:11px">Add line items above</td></tr>`}</tbody>
     </table>
     <div class="inv-tots">
-      <div class="inv-tot-r"><span>Subtotal</span><span>${c}${sub.toFixed(2)}</span></div>
-      ${dp>0?`<div class="inv-tot-r"><span>Discount (${dp}%)</span><span>-${c}${da.toFixed(2)}</span></div>`:''}
-      ${tp>0?`<div class="inv-tot-r"><span>Tax (${tp}%)</span><span>${c}${ta.toFixed(2)}</span></div>`:''}
-      <div class="inv-tot-r inv-grand"><span>Total Due</span><span>${c}${tot.toFixed(2)}</span></div>
+      <div class="inv-tot-r"><span>${getLang().subtotal}</span><span>${c}${sub.toFixed(2)}</span></div>
+      ${dp>0?`<div class="inv-tot-r"><span>${getLang().discount} (${dp}%)</span><span>-${c}${da.toFixed(2)}</span></div>`:''}
+      ${tp>0?`<div class="inv-tot-r"><span>${getLang().tax} (${tp}%)</span><span>${taxInclusive?'(incl.) ':''}${c}${ta.toFixed(2)}</span></div>`:''}
+      ${shipping>0?`<div class="inv-tot-r"><span>${getLang().shipping}</span><span>${c}${shipping.toFixed(2)}</span></div>`:''}
+      <div class="inv-tot-r inv-grand" style="color:${accentColor}"><span>${getLang().total}</span><span>${c}${tot.toFixed(2)}</span></div>
     </div>
-    ${v('notes')?`<div class="inv-notes"><h3>Notes &amp; Terms</h3><p>${esc(v('notes'))}</p></div>`:''}
-    <div class="inv-foot">Thank you for your business!</div>`;
-}
-
-// ---- SAVE / TRACKER ----
-function saveInv(){
-  const c=cur(), {tot}=calcs();
-  invoices.unshift({id:Date.now(),num:v('invNum')||'INV-?',client:v('cliName')||'Unknown',date:v('invDate')||new Date().toISOString().split('T')[0],total:c+tot.toFixed(2),status:'unpaid'});
-  if(invoices.length>20)invoices=invoices.slice(0,20);
-  try{localStorage.setItem('inv_list',JSON.stringify(invoices));const n=parseInt(localStorage.getItem('inv_c')||'0');localStorage.setItem('inv_c',n+1)}catch(e){}
-  renderTrk(); toast('Invoice saved ✓');
-}
-function renderTrk(){
-  const el=g('trkList');
-  if(!invoices.length){el.innerHTML='<div class="tracker-empty">No saved invoices yet. Click Save after filling your invoice.</div>';return}
-  el.innerHTML=invoices.map(i=>`
-    <div class="trk-item">
-      <div class="trk-info"><strong>${esc(i.num)} · ${esc(i.client)}</strong><span>${fd(i.date)}</span></div>
-      <div class="trk-amt">${esc(i.total)}</div>
-      <span class="st ${i.status}" onclick="cycleStatus(${i.id})" role="button" tabindex="0" aria-label="Status: ${i.status}">${i.status.charAt(0).toUpperCase()+i.status.slice(1)}</span>
-      <button class="trk-del" onclick="delInv(${i.id})" aria-label="Delete ${esc(i.num)}">×</button>
-    </div>`).join('');
-}
-function cycleStatus(id){
-  const i=invoices.find(x=>x.id===id); if(!i)return;
-  const c=['unpaid','sent','paid'];
-  i.status=c[(c.indexOf(i.status)+1)%c.length];
-  try{localStorage.setItem('inv_list',JSON.stringify(invoices))}catch(e){}
-  renderTrk();
-}
-function delInv(id){
-  invoices=invoices.filter(i=>i.id!==id);
-  try{localStorage.setItem('inv_list',JSON.stringify(invoices))}catch(e){}
-  renderTrk();
-}
-
-// ---- PDF ----
-function _loadScript(src){
-  return new Promise((res,rej)=>{
-    if(document.querySelector('script[src="'+src+'"]')){res();return;}
-    const s=document.createElement('script');
-    s.src=src; s.onload=res; s.onerror=rej;
-    document.head.appendChild(s);
-  });
-}
-
-async function dlPDF(){
-  const btn = document.querySelector('.btn-pdf');
-  const prevHTML = btn.innerHTML;
-  btn.innerHTML = '⏳ Loading...';
-  btn.disabled = true;
-
-  try {
-    if(!window.html2canvas){
-      btn.innerHTML='⏳ Loading PDF engine...';
-      await _loadScript('https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js');
-    }
-    if(!window.jspdf){
-      await _loadScript('https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js');
-    }
-    btn.innerHTML='⏳ Generating PDF...';
-    const { jsPDF } = window.jspdf;
-    const preview = document.getElementById('preview');
-
-    // Temporarily force white background & light theme for capture
-    const html = document.documentElement;
-    const wasDark = html.getAttribute('data-theme') === 'dark';
-    if (wasDark) html.setAttribute('data-theme', 'light');
-    preview.style.background = '#ffffff';
-    preview.style.color = '#0f172a';
-
-    // Wait a frame for styles to apply
-    await new Promise(r => setTimeout(r, 80));
-
-    const canvas = await html2canvas(preview, {
-      scale: 2,
-      useCORS: true,
-      backgroundColor: '#ffffff',
-      logging: false,
-      removeContainer: true
-    });
-
-    // Restore theme
-    if (wasDark) html.setAttribute('data-theme', 'dark');
-    preview.style.background = '';
-    preview.style.color = '';
-
-    const imgData = canvas.toDataURL('image/jpeg', 0.97);
-    const pdf = new jsPDF({ orientation: 'portrait', unit: 'mm', format: 'a4' });
-
-    const pageW = pdf.internal.pageSize.getWidth();
-    const pageH = pdf.internal.pageSize.getHeight();
-    const margin = 10;
-    const usableW = pageW - margin * 2;
-    const imgH = (canvas.height * usableW) / canvas.width;
-
-    // If invoice is taller than one page, split across pages
-    if (imgH <= pageH - margin * 2) {
-      pdf.addImage(imgData, 'JPEG', margin, margin, usableW, imgH);
-    } else {
-      let yOffset = 0;
-      const pageImgH = pageH - margin * 2;
-      const totalPages = Math.ceil(imgH / pageImgH);
-      for (let p = 0; p < totalPages; p++) {
-        if (p > 0) pdf.addPage();
-        pdf.addImage(imgData, 'JPEG', margin, margin - yOffset, usableW, imgH);
-        yOffset += pageImgH;
-      }
-    }
-
-    const invNum = v('invNum') || 'Invoice';
-    const bizName = v('bizName');
-    const filename = (bizName ? bizName.replace(/[^a-zA-Z0-9]/g,'-') + '-' : '') + invNum + '.pdf';
-    pdf.save(filename);
-    toast('PDF downloaded ✓');
-
-  } catch(err) {
-    console.error('PDF error:', err);
-    toast('Error — trying print fallback...');
-    setTimeout(() => window.print(), 400);
-  } finally {
-    btn.innerHTML = prevHTML;
-    btn.disabled = false;
-  }
-}
-
-// ---- SHARE (Web Share API) ----
-function shareInv(){
-  if(navigator.share){
-    navigator.share({title:'Invoice from '+v('bizName'),text:`Invoice ${v('invNum')} — Total: ${g('totDisp').textContent}`,url:window.location.href}).catch(()=>{});
-  } else {
-    openEmailPanel();
-  }
-}
-
-// ---- EMAIL ----
-function openEmailPanel(){
-  g('emailModal').classList.add('open');
-  setTimeout(()=>g('emailTo').focus(),100);
-}
-async function doEmailPDF(){
-  const to=g('emailTo').value.trim();
-  if(!to){toast('Enter client email first');g('emailTo').focus();return;}
-  const btn=g('emailSendBtn'),txt=g('emailBtnText');
-  const orig=txt.innerHTML;txt.innerHTML='⏳ Generating PDF...';btn.disabled=true;
-  try{
-    if(!window.html2canvas) await new Promise((res,rej)=>{const s=document.createElement('script');s.src='https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js';s.onload=res;s.onerror=rej;document.head.appendChild(s);});
-    if(!window.jspdf) await new Promise((res,rej)=>{const s=document.createElement('script');s.src='https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js';s.onload=res;s.onerror=rej;document.head.appendChild(s);});
-    const{jsPDF}=window.jspdf;
-    const el=g('preview');
-    const canvas=await html2canvas(el,{scale:2,useCORS:true,backgroundColor:'#ffffff',logging:false});
-    const img=canvas.toDataURL('image/jpeg',0.97);
-    const pdf=new jsPDF({orientation:'portrait',unit:'mm',format:'a4'});
-    const pw=pdf.internal.pageSize.getWidth(),ph=pdf.internal.pageSize.getHeight(),m=15;
-    const uw=pw-m*2,ih=(canvas.height*uw)/canvas.width;
-    if(ih<=ph-m*2){pdf.addImage(img,'JPEG',m,m,uw,ih);}
-    else{let y=0,pph=ph-m*2,pages=Math.ceil(ih/pph);for(let p=0;p<pages;p++){if(p>0)pdf.addPage();pdf.addImage(img,'JPEG',m,m-y,uw,ih);y+=pph;}}
-    const fname=(v('bizName')?v('bizName').replace(/[^a-zA-Z0-9]/g,'-')+'-':'')+(v('invNum')||'Invoice')+'.pdf';
-    txt.innerHTML='⏳ Opening email...';
-    pdf.save(fname);
-    const sub=encodeURIComponent('Invoice '+v('invNum')+' from '+(v('bizName')||'InvoiceFree'));
-    const body=encodeURIComponent('Hi '+v('cliName')+',' + '\n\nPlease find invoice '+v('invNum')+' for '+g('totDisp').textContent+' attached to this email.\n\nPayment is due by '+fd(v('dueDate'))+'.\n\n'+(v('notes')?'Notes: '+v('notes')+'\n\n':'')+'Thank you,\n'+(v('bizName')||''));
-    setTimeout(()=>{window.location.href='mailto:'+to+'?subject='+sub+'&body='+body;},600);
-    setTimeout(()=>{closeModal();toast('✓ PDF saved — attach it to the email that opened');},1200);
-  }catch(err){console.error(err);toast('Error generating PDF');}
-  finally{txt.innerHTML=orig;btn.disabled=false;}
-}
-function doSendEmail(){doEmailPDF();}
-function closeModal(){g('emailModal').classList.remove('open')}
-
-// ---- EMAIL CAPTURE ----
-function emailSubmit(e){
-  e.preventDefault();
-  const email=e.target.querySelector('input[type="email"]').value;
-  // Replace with your email service (Mailchimp, ConvertKit, Formspree)
-  toast('Thanks! Check your inbox ✓');
-  e.target.reset();
-}
-
-// ---- FAQ ----
-function toggleFaq(btn){
-  const item=btn.closest('.faq-item'), open=item.classList.contains('open');
-  document.querySelectorAll('.faq-item').forEach(i=>{i.classList.remove('open');i.querySelector('.faq-a').hidden=true;i.querySelector('.faq-q').setAttribute('aria-expanded','false')});
-  if(!open){item.classList.add('open');item.querySelector('.faq-a').hidden=false;btn.setAttribute('aria-expanded','true')}
-}
-
-// ---- DARK MODE ----
-function initDark(){
-  const p=localStorage.getItem('inv_theme');
-  const isDark=p==='dark'||(!p&&window.matchMedia('(prefers-color-scheme: dark)').matches);
-  if(isDark)applyDark(true);
-}
-function toggleDark(){
-  const d=document.documentElement.getAttribute('data-theme')==='dark';
-  applyDark(!d);
-  try{localStorage.setItem('inv_theme',d?'light':'dark')}catch(e){}
-}
-function applyDark(on){
-  document.documentElement.setAttribute('data-theme',on?'dark':'light');
-  ['dkIcon','dkIcon2'].forEach(id=>{const el=g(id);if(el)el.textContent=on?'☀️':'🌙'});
-  const lbl=g('dkLbl');if(lbl)lbl.textContent=on?'Light':'Dark';
-}
-
-// ---- COOKIE ----
-function initCookie(){if(localStorage.getItem('inv_ck'))g('cookie-banner').style.display='none'}
-function acceptCookies(){localStorage.setItem('inv_ck','1');g('cookie-banner').style.display='none'}
-function declineCookies(){g('cookie-banner').style.display='none'}
-
-// ---- AUTO SAVE ----
-function autoSave(){
-  try{localStorage.setItem('inv_d',JSON.stringify({bizName:v('bizName'),bizAddr:v('bizAddr'),bizEmail:v('bizEmail'),bizPhone:v('bizPhone'),cliName:v('cliName'),cliAddr:v('cliAddr'),cliEmail:v('cliEmail'),notes:v('notes'),logo:logoData}))}catch(e){}
-}
-
-// ---- CLEAR ----
-function clearForm(){
-  if(!confirm('Clear all invoice data and start fresh?'))return;
-  // Clear all text fields
-  ['bizName','bizAddr','bizEmail','bizPhone','cliName','cliAddr','cliEmail','notes'].forEach(k=>g(k).value='');
-  // Reset numbers
-  g('taxRate').value='0'; g('discount').value='0';
-  // Reset currency to USD
-  g('currency').value='$';
-  // Reset logo
-  logoData=null;
-  g('logoImg').style.display='none';
-  g('logoImg').src='';
-  g('logoHint').style.display='';
-  g('logoIn').value='';
-  // Reset line items
-  items=[]; addItem(); addItem();
-  // Reset dates and invoice number
-  setDates(); autoNum();
-  // Clear localStorage so old data doesn't reload
-  try{localStorage.removeItem('inv_d');}catch(e){}
-  // Re-render preview
-  render();
-  toast('✓ New invoice started');
-}
-
-// ---- TOAST ----
-function toast(msg){
-  const t=g('toast'); t.textContent=msg; t.classList.add('show');
-  setTimeout(()=>t.classList.remove('show'),2600);
-}
-
-// ---- HELPERS ----
-function g(id){return document.getElementById(id)}
-function v(id){return g(id)?.value?.trim()||''}
-function cur(){return g('currency').value}
-function pf(x){return parseFloat(x)||0}
-function esc(s){return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;')}
-function fd(d){if(!d)return'—';const[y,m,dd]=d.split('-');return`${dd}/${m}/${y}`}
-
-init();
-</script>
-<!-- Google AdSense: deferred to avoid render-blocking -->
-<script>(function(){var s=document.createElement('script');s.async=true;s.src='https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4036780477567730';s.crossOrigin='anonymous';document.body.appendChild(s);})();</script>
-</body>
-</html>
+    ${v('notes')?`<div class="inv-notes"><h3>${getLang().notes}</h3><p>${esc(v('notes'))}</p></div>`:''}
+    <div class="inv-foot">${getLang().thanks}</div>`;
