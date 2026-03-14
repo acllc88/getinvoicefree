@@ -167,7 +167,7 @@ footer{background:var(--bg);border-top:1px solid var(--bd);padding:28px 20px}
 <style>
 
 #inv-preview{background:#fff;padding:26px;font-size:12px;line-height:1.6;color:#0f172a;font-family:'DM Sans',sans-serif}
-.p-head{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:18px;padding-bottom:12px;border-bottom:2px solid #0f172a}
+.p-head{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:18px;padding-bottom:12px;border-bottom:2px solid var(--bd)}
 .p-biz-name{font-size:14px;font-weight:700}.p-biz-sub{font-size:10px;color:#64748b;margin-top:1px}
 .p-title{font-size:24px;font-weight:700;letter-spacing:.06em;text-align:right}.p-num{font-size:11px;color:#64748b;text-align:right;margin-top:2px}
 .p-parties{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:12px}
@@ -393,7 +393,7 @@ function render(){
         (bizAddr?'<div class="p-biz-sub" style="white-space:pre-line">'+esc(bizAddr)+'</div>':'')+
         (bizEmail?'<div class="p-biz-sub">'+esc(bizEmail)+(bizPhone?' &middot; '+esc(bizPhone):'')+'</div>':'')+
       '</div>'+
-      '<div><div class="p-title">INVOICE</div><div class="p-num">#'+esc(gv('invNum')||'INV-001')+'</div></div>'+
+      '<div><div class="p-title" style="color:'+accentColor+'">'+ getLang().invoice +'</div><div class="p-num">#'+esc(gv('invNum')||'INV-001')+'</div></div>'+
     '</div>'+
     '<div class="p-parties">'+
       '<div class="p-party"><label>'+getLang().from+'</label><div class="nm">'+esc(biz)+'</div></div>'+
@@ -408,8 +408,8 @@ function render(){
       '<div><label>'+getLang().due+'</label><span>'+fd(gv('dueDate'))+'</span></div>'+
     '</div>'+
     '<table class="p-tbl"><thead><tr>'+
-      '<th style="width:44%">'+getLang().desc+'</th><th style="width:12%;text-align:center">Qty</th>'+
-      '<th style="width:22%;text-align:right">'+getLang().rate+'</th><th style="text-align:right">Amount</th>'+
+      '<th style="width:44%">'+getLang().desc+'</th><th style="width:12%;text-align:center">'+ getLang().qty +'</th>'+
+      '<th style="width:22%;text-align:right">'+getLang().rate+'</th><th style="text-align:right">'+ getLang().amount +'</th>'+
     '</tr></thead><tbody>'+lines+'</tbody></table>'+
     '<div class="p-tots">'+
       '<div class="p-tot-r"><span>'+getLang().subtotal+'</span><span>'+c+r.sub.toFixed(2)+'</span></div>'+

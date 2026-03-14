@@ -395,7 +395,7 @@ function render(){
         (bizAddr?'<div class="p-biz-sub" style="white-space:pre-line">'+esc(bizAddr)+'</div>':'')+
         (bizEmail?'<div class="p-biz-sub">'+esc(bizEmail)+(bizPhone?' &middot; '+esc(bizPhone):'')+'</div>':'')+
       '</div>'+
-      '<div><div class="p-title">INVOICE</div><div class="p-num">#'+esc(gv('invNum')||'INV-001')+'</div></div>'+
+      '<div><div class="p-title" style="color:'+accentColor+'">'+ getLang().invoice +'</div><div class="p-num">#'+esc(gv('invNum')||'INV-001')+'</div></div>'+
     '</div>'+
     '<div class="p-body">'+
     '<div class="p-parties">'+
@@ -411,8 +411,8 @@ function render(){
       '<div><label>'+getLang().due+'</label><span>'+fd(gv('dueDate'))+'</span></div>'+
     '</div>'+
     '<table class="p-tbl"><thead><tr>'+
-      '<th style="width:44%">'+getLang().desc+'</th><th style="width:12%;text-align:center">Qty</th>'+
-      '<th style="width:22%;text-align:right">'+getLang().rate+'</th><th style="text-align:right">Amount</th>'+
+      '<th style="width:44%">'+getLang().desc+'</th><th style="width:12%;text-align:center">'+ getLang().qty +'</th>'+
+      '<th style="width:22%;text-align:right">'+getLang().rate+'</th><th style="text-align:right">'+ getLang().amount +'</th>'+
     '</tr></thead><tbody>'+lines+'</tbody></table>'+
     '<div class="p-tots">'+
       '<div class="p-tot-r"><span>'+getLang().subtotal+'</span><span>'+c+r.sub.toFixed(2)+'</span></div>'+
