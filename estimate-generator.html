@@ -224,7 +224,7 @@ nav{background:var(--bg,#fff);border-bottom:1px solid var(--border,#e2e8f0);posi
         <div class="field"><label>Date</label><input id="estDate" type="date" oninput="render()"></div>
       </div>
       <div class="row2">
-        <div class="field"><label>Valid Until</label><input id="validUntil" type="date" oninput="render()"></div>
+        <div class="field"><label>${getLang().validUntil}</label><input id="validUntil" type="date" oninput="render()"></div>
         <div class="field"><label>Project / Subject</label><input id="subject" type="text" placeholder="Website redesign" oninput="render()"></div>
       </div>
 
@@ -258,6 +258,18 @@ nav{background:var(--bg,#fff);border-bottom:1px solid var(--border,#e2e8f0);posi
       <p class="sec">Terms & Notes</p>
       <div class="field"><label>Notes / Terms</label><textarea id="notes" placeholder="This estimate is valid for 30 days. 50% deposit required to begin work." oninput="render()"></textarea></div>
 
+
+      <p class="sec">Document Language</p>
+      <select id="docLang" onchange="render()" style="width:100%;background:var(--bg2,#f8f9fc);border:1.5px solid var(--bd,#e2e8f0);border-radius:8px;padding:9px 11px;font-size:15px;color:var(--tx,#0f172a);font-family:'DM Sans',sans-serif;cursor:pointer">
+        <option value="en">&#127468;&#127463; English</option>
+        <option value="fr">&#127467;&#127479; Fran&#231;ais</option>
+        <option value="es">&#127466;&#127480; Espa&#241;ol</option>
+        <option value="de">&#127465;&#127466; Deutsch</option>
+        <option value="ar">&#127474;&#127462; &#1575;&#1604;&#1593;&#1585;&#1576;&#1610;&#1577;</option>
+        <option value="pt">&#127463;&#127479; Portugu&#234;s</option>
+        <option value="it">&#127470;&#127481; Italiano</option>
+        <option value="nl">&#127475;&#127473; Nederlands</option>
+      </select>
       <button class="btn-pdf" id="dlBtn" onclick="dlPDF()">
         <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
         Download Estimate PDF — Free
@@ -361,6 +373,17 @@ nav{background:var(--bg,#fff);border-bottom:1px solid var(--border,#e2e8f0);posi
 <div class="toast" id="toast"></div>
 
 <script>
+var LANGS={
+en:{receipt:'RECEIPT',estimate:'ESTIMATE',preparedFor:'Prepared For',recNum:'Receipt #',estNum:'Estimate #',date:'Date',datePaid:'Date Paid',validUntil:'Valid Until',receivedFrom:'Received From',clientEmail:'Client Email',payMethod:'Payment Method',desc:'Description',qty:'Qty',rate:'Rate',amount:'Amount',total:'Total',subtotal:'Subtotal',discount:'Discount',tax:'Tax',amtPaid:'Amount Paid',estTotal:'Estimate Total',notes:'Notes',project:'Project',paidStamp:'PAYMENT RECEIVED',receiptFoot:'Thank you! Keep this receipt for your records.',estimateFoot:'This is an estimate, not an invoice. Prices subject to final confirmation.',validNote:'Valid until'},
+fr:{receipt:'RECU',estimate:'DEVIS',preparedFor:'Prepare pour',recNum:'Recu No',estNum:'Devis No',date:'Date',datePaid:'Date de paiement',validUntil:"Valide jusqu'au",receivedFrom:'Recu de',clientEmail:'Email client',payMethod:'Mode de paiement',desc:'Description',qty:'Qte',rate:'Prix',amount:'Montant',total:'Total',subtotal:'Sous-total',discount:'Remise',tax:'TVA',amtPaid:'Montant paye',estTotal:'Total du devis',notes:'Notes',project:'Projet',paidStamp:'PAIEMENT RECU',receiptFoot:'Merci ! Conservez ce recu.',estimateFoot:'Ceci est un devis, pas une facture.',validNote:'Valide jusqu’au'},
+es:{receipt:'RECIBO',estimate:'PRESUPUESTO',preparedFor:'Preparado para',recNum:'Recibo No',estNum:'Presupuesto No',date:'Fecha',datePaid:'Fecha de pago',validUntil:'Valido hasta',receivedFrom:'Recibido de',clientEmail:'Email cliente',payMethod:'Metodo de pago',desc:'Descripcion',qty:'Cant.',rate:'Precio',amount:'Importe',total:'Total',subtotal:'Subtotal',discount:'Descuento',tax:'IVA',amtPaid:'Importe pagado',estTotal:'Total del presupuesto',notes:'Notas',project:'Proyecto',paidStamp:'PAGO RECIBIDO',receiptFoot:'¡Gracias! Guarde este recibo.',estimateFoot:'Esto es un presupuesto, no una factura.',validNote:'Valido hasta'},
+de:{receipt:'QUITTUNG',estimate:'ANGEBOT',preparedFor:'Vorbereitet für',recNum:'Quittung Nr.',estNum:'Angebots-Nr.',date:'Datum',datePaid:'Zahlungsdatum',validUntil:'Gültig bis',receivedFrom:'Erhalten von',clientEmail:'Kunden-E-Mail',payMethod:'Zahlungsmethode',desc:'Beschreibung',qty:'Menge',rate:'Einzelpreis',amount:'Betrag',total:'Gesamt',subtotal:'Zwischensumme',discount:'Rabatt',tax:'MwSt.',amtPaid:'Bezahlter Betrag',estTotal:'Gesamtbetrag',notes:'Hinweise',project:'Projekt',paidStamp:'ZAHLUNG ERHALTEN',receiptFoot:'Vielen Dank! Bewahren Sie diese Quittung auf.',estimateFoot:'Dies ist ein Angebot, keine Rechnung.',validNote:'Gültig bis'},
+ar:{receipt:'وصل',estimate:'تقدير',preparedFor:'معد ل',recNum:'رقم الوصل',estNum:'رقم التقدير',date:'التاريخ',datePaid:'تاريخ الدفع',validUntil:'صالح حتى',receivedFrom:'مستلم من',clientEmail:'بريد العميل',payMethod:'طريقة الدفع',desc:'الوصف',qty:'الكمية',rate:'السعر',amount:'المبلغ',total:'المجموع',subtotal:'المجموع الفرعي',discount:'خصم',tax:'ضريبة',amtPaid:'المبلغ المدفوع',estTotal:'إجمالي التقدير',notes:'ملاحظات',project:'المشروع',paidStamp:'تم استلام الدفع',receiptFoot:'شكراً! احتفظوا بهذا الوصل.',estimateFoot:'هذا تقدير وليس فاتورة.',validNote:'صالح حتى'},
+pt:{receipt:'RECIBO',estimate:'ORCAMENTO',preparedFor:'Preparado para',recNum:'Recibo No',estNum:'Orcamento No',date:'Data',datePaid:'Data de pagamento',validUntil:'Valido ate',receivedFrom:'Recebido de',clientEmail:'Email do cliente',payMethod:'Forma de pagamento',desc:'Descricao',qty:'Qtd.',rate:'Preco',amount:'Valor',total:'Total',subtotal:'Subtotal',discount:'Desconto',tax:'Imposto',amtPaid:'Valor pago',estTotal:'Total do orcamento',notes:'Notas',project:'Projeto',paidStamp:'PAGAMENTO RECEBIDO',receiptFoot:'Obrigado! Guarde este recibo.',estimateFoot:'Este e um orcamento, nao uma fatura.',validNote:'Valido ate'},
+it:{receipt:'RICEVUTA',estimate:'PREVENTIVO',preparedFor:'Preparato per',recNum:'Ricevuta No',estNum:'Preventivo No',date:'Data',datePaid:'Data di pagamento',validUntil:'Valido fino al',receivedFrom:'Ricevuto da',clientEmail:'Email cliente',payMethod:'Metodo di pagamento',desc:'Descrizione',qty:'Qta',rate:'Prezzo',amount:'Importo',total:'Totale',subtotal:'Subtotale',discount:'Sconto',tax:'IVA',amtPaid:'Importo pagato',estTotal:'Totale preventivo',notes:'Note',project:'Progetto',paidStamp:'PAGAMENTO RICEVUTO',receiptFoot:'Grazie! Conserva questa ricevuta.',estimateFoot:'Questo e un preventivo, non una fattura.',validNote:'Valido fino al'},
+nl:{receipt:'KWITANTIE',estimate:'OFFERTE',preparedFor:'Opgesteld voor',recNum:'Kwitantie Nr.',estNum:'Offerte Nr.',date:'Datum',datePaid:'Betaaldatum',validUntil:'Geldig tot',receivedFrom:'Ontvangen van',clientEmail:'E-mail client',payMethod:'Betaalmethode',desc:'Omschrijving',qty:'Aantal',rate:'Prijs',amount:'Bedrag',total:'Totaal',subtotal:'Subtotaal',discount:'Korting',tax:'BTW',amtPaid:'Betaald bedrag',estTotal:'Totaal offerte',notes:'Notities',project:'Project',paidStamp:'BETALING ONTVANGEN',receiptFoot:'Bedankt! Bewaar dit ontvangstbewijs.',estimateFoot:'Dit is een offerte, geen factuur.',validNote:'Geldig tot'}
+};
+function getLang(){var el=document.getElementById('docLang');return el&&LANGS[el.value]?LANGS[el.value]:LANGS.en;}
 let items = [];
 
 function init() {
@@ -430,10 +453,13 @@ function render() {
       <td>${c}${(pf(i.qty)*pf(i.price)).toFixed(2)}</td>
     </tr>`).join('') || `<tr><td colspan="4" style="text-align:center;color:#94a3b8;padding:12px;font-size:11px">Add items in the form →</td></tr>`;
 
+  var isAr=document.getElementById('docLang')&&document.getElementById('docLang').value==='ar';
+  var ep=document.getElementById('est-preview');ep.setAttribute('dir',isAr?'rtl':'ltr');ep.style.fontFamily=isAr?'Noto Sans Arabic,sans-serif':'DM Sans,sans-serif';
+  if(isAr&&!document.getElementById('ar-e')){var aes=document.createElement('style');aes.id='ar-e';aes.textContent="@import url('https://fonts.googleapis.com/css2?family=Noto+Sans+Arabic:wght@400;500;600;700&display=swap');";document.head.appendChild(aes);}
   document.getElementById('est-preview').innerHTML = `
     <div class="e-top">
       <div>
-        <div class="e-title">ESTIMATE</div>
+        <div class="e-title">${getLang().estimate}</div>
         <div style="font-size:11px;color:#64748b;margin-top:2px">${esc(g('estNum')||'EST-001')} · ${fmtDate(g('estDate'))}</div>
       </div>
       <div class="e-biz" style="text-align:right">
@@ -443,25 +469,25 @@ function render() {
       </div>
     </div>
     <div class="e-meta">
-      <div><label>Prepared For</label><span>${esc(cli)}</span></div>
-      <div><label>Date</label><span>${fmtDate(g('estDate'))}</span></div>
-      ${valid ? `<div><label>Valid Until</label><span>${fmtDate(valid)}</span></div>` : '<div></div>'}
-      ${g('cliEmail') ? `<div><label>Client Email</label><span>${esc(g('cliEmail'))}</span></div>` : '<div></div>'}
+      <div><label>${getLang().preparedFor}</label><span>${esc(cli)}</span></div>
+      <div><label>${getLang().date}</label><span>${fmtDate(g('estDate'))}</span></div>
+      ${valid ? `<div><label>${getLang().validUntil}</label><span>${fmtDate(valid)}</span></div>` : '<div></div>'}
+      ${g('cliEmail') ? `<div><label>${getLang().clientEmail}</label><span>${esc(g('cliEmail'))}</span></div>` : '<div></div>'}
     </div>
-    ${subj ? `<div class="e-subject">Project: ${esc(subj)}</div>` : ''}
-    ${valid ? `<div class="e-valid">⏳ Valid until ${fmtDate(valid)}</div>` : ''}
+    ${subj ? `<div class="e-subject">${getLang().project}: ${esc(subj)}</div>` : ''}
+    ${valid ? `<div class="e-valid">&#9203; ${getLang().validNote} ${fmtDate(valid)}</div>` : ''}
     <table class="e-tbl">
-      <thead><tr><th style="width:46%">Description</th><th style="width:12%">Qty</th><th style="width:21%">Rate</th><th>Total</th></tr></thead>
+      <thead><tr><th style="width:46%">${getLang().desc}</th><th style="width:12%">${getLang().qty}</th><th style="width:21%">${getLang().rate}</th><th>${getLang().total}</th></tr></thead>
       <tbody>${lines}</tbody>
     </table>
     <div class="e-tots-wrap">
-      <div class="e-tot-row"><span>Subtotal</span><span>${c}${sub.toFixed(2)}</span></div>
-      ${dp>0?`<div class="e-tot-row"><span>Discount (${dp}%)</span><span>-${c}${da.toFixed(2)}</span></div>`:''}
-      ${tp>0?`<div class="e-tot-row"><span>Tax (${tp}%)</span><span>${c}${ta.toFixed(2)}</span></div>`:''}
-      <div class="e-tot-row e-grand"><span>Estimate Total</span><span>${c}${tot.toFixed(2)}</span></div>
+      <div class="e-tot-row"><span>${getLang().subtotal}</span><span>${c}${sub.toFixed(2)}</span></div>
+      ${dp>0?`<div class="e-tot-row"><span>${getLang().discount} (${dp}%)</span><span>-${c}${da.toFixed(2)}</span></div>`:''}
+      ${tp>0?`<div class="e-tot-row"><span>${getLang().tax} (${tp}%)</span><span>${c}${ta.toFixed(2)}</span></div>`:''}
+      <div class="e-tot-row e-grand"><span>${getLang().estTotal}</span><span>${c}${tot.toFixed(2)}</span></div>
     </div>
     ${g('notes') ? `<div class="e-notes">${esc(g('notes'))}</div>` : ''}
-    <div class="e-foot">This is an estimate, not an invoice. Prices subject to final confirmation.<br>${esc(biz)}</div>`;
+    <div class="e-foot">${getLang().estimateFoot}<br>${esc(biz)}</div>`;
 }
 
 function _load(src) {
@@ -471,28 +497,38 @@ function _load(src) {
   });
 }
 
-async function dlPDF() {
-  const btn = document.getElementById('dlBtn');
-  const orig = btn.innerHTML; btn.innerHTML='⏳ Loading PDF engine...'; btn.disabled=true;
-  try {
-    await _load('https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js');
-    await _load('https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js');
-    btn.innerHTML = '⏳ Generating PDF...';
-    const { jsPDF } = window.jspdf;
-    const el = document.getElementById('est-preview');
-    const canvas = await html2canvas(el, { scale:2, useCORS:true, backgroundColor:'#ffffff', logging:false });
-    const img = canvas.toDataURL('image/jpeg', 0.97);
-    const pdf = new jsPDF({ orientation:'portrait', unit:'mm', format:'a4' });
-    const pw=pdf.internal.pageSize.getWidth(), ph=pdf.internal.pageSize.getHeight(), m=15;
-    const uw=pw-m*2, ih=(canvas.height*uw)/canvas.width;
-    if (ih <= ph-m*2) { pdf.addImage(img,'JPEG',m,m,uw,ih); }
-    else { let y=0,pph=ph-m*2,pages=Math.ceil(ih/pph); for(let p=0;p<pages;p++){if(p>0)pdf.addPage();pdf.addImage(img,'JPEG',m,m-y,uw,ih);y+=pph;} }
-    const fname=(g('bizName')?g('bizName').replace(/[^a-zA-Z0-9]/g,'-')+'-':'')+(g('estNum')||'Estimate')+'.pdf';
-    pdf.save(fname);
-    toast('✓ Estimate PDF downloaded!');
-    try { localStorage.setItem('ecnt', parseInt(localStorage.getItem('ecnt')||'0')+1); } catch(e){}
-  } catch(err) { console.error(err); toast('Error generating PDF. Please try again.'); }
-  finally { btn.innerHTML=orig; btn.disabled=false; }
+function dlPDF(){
+  var btn=document.getElementById('dlBtn'),orig=btn.innerHTML;
+  btn.innerHTML='&#9203; Generating...';btn.disabled=true;
+  try{
+    var langEl=document.getElementById('docLang');
+    var isArabic=langEl&&langEl.value==='ar';
+    var dir=isArabic?'rtl':'ltr';
+    var fontsURL=isArabic
+      ?'https://fonts.googleapis.com/css2?family=Noto+Sans+Arabic:wght@400;500;600;700&family=DM+Sans:wght@400;500;600;700&display=swap'
+      :'https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&display=swap';
+    var previewEl=document.querySelector('[id$="-preview"]');
+    var invoiceHTML=previewEl?previewEl.innerHTML:'';
+    var allCSS=Array.from(document.querySelectorAll('style')).map(function(s){return s.textContent;}).join('');
+    var printDoc='<!DOCTYPE html><html lang="'+(isArabic?'ar':'en')+'" dir="'+dir+'"><head><meta charset="UTF-8"><title>Document</title>'
+      +'<link rel="preconnect" href="https://fonts.googleapis.com">'
+      +'<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>'
+      +'<link href="'+fontsURL+'" rel="stylesheet">'
+      +'<style>*{box-sizing:border-box;margin:0;padding:0}html,body{background:#fff;margin:0;padding:20px}'
+      +'body{font-family:"DM Sans",'+(isArabic?'"Noto Sans Arabic",':'')+'sans-serif;direction:'+dir+';color:#0f172a}'
+      +allCSS
+      +'@page{margin:10mm;size:A4 portrait}'
+      +'@media print{body{-webkit-print-color-adjust:exact;print-color-adjust:exact}}'
+      +'</style></head><body>'
+      +invoiceHTML
+      +'<script>document.fonts.ready.then(function(){setTimeout(function(){window.print();},400);});window.addEventListener("afterprint",function(){window.close();});<\/script>'
+      +'</body></html>';
+    var pw=window.open('','_blank','width=900,height=700');
+    if(!pw){toast('Allow popups to download PDF');return;}
+    pw.document.open();pw.document.write(printDoc);pw.document.close();
+    toast('Print dialog opening — Save as PDF');
+  }catch(err){console.error(err);toast('Error generating PDF');}
+  finally{setTimeout(function(){btn.innerHTML=orig;btn.disabled=false;},1000);}
 }
 
 function toast(msg){const t=document.getElementById('toast');t.textContent=msg;t.classList.add('show');setTimeout(()=>t.classList.remove('show'),2800);}
