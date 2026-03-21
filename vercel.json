@@ -1,13 +1,20 @@
 {
   "redirects": [
     {
-      "source": "/(.*)",
+      "source": "/((?!ads\\.txt$).*)",
       "has": [{ "type": "host", "value": "getinvoicefree.app" }],
       "destination": "https://www.getinvoicefree.app/$1",
       "permanent": true
     }
   ],
   "headers": [
+    {
+      "source": "/ads.txt",
+      "headers": [
+        { "key": "Content-Type", "value": "text/plain" },
+        { "key": "Access-Control-Allow-Origin", "value": "*" }
+      ]
+    },
     {
       "source": "/(.*)",
       "headers": [
