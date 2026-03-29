@@ -1,0 +1,27 @@
+# InvoiceFree — Free Invoice Generator
+# https://www.getinvoicefree.app
+
+## About
+InvoiceFree is a free online invoice generator for freelancers and small business owners. No signup required. Create professional invoices, receipts, estimates, proforma invoices and credit notes. Download PDF instantly. Supports 8 languages including Arabic RTL.
+
+## Tools
+- Free Invoice Generator: https://www.getinvoicefree.app/
+- Receipt Generator: https://www.getinvoicefree.app/receipt-generator.html
+- Estimate Generator: https://www.getinvoicefree.app/estimate-generator.html
+- AI Invoice Generator: https://www.getinvoicefree.app/ai-invoice-generator.html
+- Proforma Invoice Generator: https://www.getinvoicefree.app/proforma-invoice-generator.html
+- Credit Note Generator: https://www.getinvoicefree.app/credit-note-generator.html
+- Invoice Templates: https://www.getinvoicefree.app/invoice-templates.html
+
+## Blog
+- How to Write an Invoice: https://www.getinvoicefree.app/blog-how-to-write-an-invoice.html
+- How to Invoice as a Freelancer: https://www.getinvoicefree.app/blog-how-to-invoice-as-a-freelancer.html
+- Invoice Payment Terms: https://www.getinvoicefree.app/blog-invoice-payment-terms.html
+- What is a Proforma Invoice: https://www.getinvoicefree.app/blog-what-is-a-proforma-invoice.html
+- How to Write a Credit Note: https://www.getinvoicefree.app/blog-how-to-write-a-credit-note.html
+- Late Payment Statistics: https://www.getinvoicefree.app/blog-freelance-invoice-late-payment.html
+- Follow Up on Unpaid Invoice: https://www.getinvoicefree.app/blog-how-to-follow-up-unpaid-invoice.html
+- Payment Terms Explained: https://www.getinvoicefree.app/blog-invoice-payment-terms-explained.html
+
+## Contact
+Email: youssef.designer1@outlook.com
