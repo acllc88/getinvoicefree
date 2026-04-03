@@ -1,7 +1,13 @@
 {
   "redirects": [
     {
-      "source": "/((?!ads\\.txt$).*)",
+      "source": "/ads.txt",
+      "has": [{ "type": "host", "value": "getinvoicefree.app" }],
+      "destination": "https://www.getinvoicefree.app/ads.txt",
+      "permanent": false
+    },
+    {
+      "source": "/((?!ads\\.txt|robots\\.txt|sitemap\\.xml|llms\\.txt).*)",
       "has": [{ "type": "host", "value": "getinvoicefree.app" }],
       "destination": "https://www.getinvoicefree.app/$1",
       "permanent": true
@@ -11,7 +17,15 @@
     {
       "source": "/ads.txt",
       "headers": [
-        { "key": "Content-Type", "value": "text/plain" },
+        { "key": "Content-Type", "value": "text/plain; charset=utf-8" },
+        { "key": "Access-Control-Allow-Origin", "value": "*" },
+        { "key": "Cache-Control", "value": "public, max-age=86400" }
+      ]
+    },
+    {
+      "source": "/robots.txt",
+      "headers": [
+        { "key": "Content-Type", "value": "text/plain; charset=utf-8" },
         { "key": "Access-Control-Allow-Origin", "value": "*" }
       ]
     },
